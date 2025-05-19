@@ -1,14 +1,10 @@
-import 'dart:io';
-
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:music_player/screens/tabs/favorites.dart';
 import 'package:music_player/screens/tabs/playlists.dart';
 import 'package:music_player/screens/tabs/songs.dart';
 import 'package:music_player/services/unfocusOnTap.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:music_player/screens/tabs/songs.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -58,9 +54,9 @@ class _HomepageState extends State<Homepage>
           // for the menu icon's color
           iconTheme: IconThemeData(color: Colors.white),
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(width: 48.0),
+              // SizedBox(width: 48.0),
               Icon(Icons.music_note, size: 27, color: Colors.white),
               SizedBox(width: 5),
               Text(
@@ -80,98 +76,61 @@ class _HomepageState extends State<Homepage>
             statusBarBrightness: Brightness.dark,
           ),
         ),
-        drawer: Drawer(
-          backgroundColor: Color(0xFF6c6a6a),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  color: Color(0xFF464343),
-                  padding: EdgeInsets.only(top: 60, bottom: 20),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.music_note, color: Colors.white, size: 40),
-                          SizedBox(width: 10),
-                          Text(
-                            'MENU',
-                            style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 7.0,
-                              fontSize: 30,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10),
-                Material(
-                  child: ListTile(
-                    splashColor: Colors.white38,
-                    tileColor: Color(0xFF6c6a6a),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                    leading: Icon(Icons.folder, color: Colors.white, size: 30),
-                    title: Text(
-                      'Choose directory',
-                      style: TextStyle(
-                        color: Colors.white,
-                        letterSpacing: 1.0,
-                        fontSize: 20,
-                      ),
-                    ),
-                    onTap: () async {
-                      String? result =
-                          await FilePicker.platform.getDirectoryPath();
-
-                      OnAudioQuery _audioQuery = OnAudioQuery();
-                      File file = File(result!);
-                      try {
-                        if (file.existsSync()) {
-                          file.deleteSync();
-                          _audioQuery.scanMedia(file.path);
-                        }
-                      } catch (e) {
-                        Flushbar(
-                          message: "Error occured while scanning: $e",
-                          margin: EdgeInsets.all(8),
-                          borderRadius: BorderRadius.circular(8),
-                          backgroundColor: Colors.red,
-                          duration: Duration(seconds: 3),
-                          flushbarPosition: FlushbarPosition.BOTTOM,
-                          flushbarStyle: FlushbarStyle.FLOATING,
-                          forwardAnimationCurve: Curves.easeOut,
-                          reverseAnimationCurve: Curves.easeInOut,
-                          icon: Icon(Icons.error, color: Colors.white),
-                        ).show(context);
-                      }
-
-                      if (result == null) {
-                        Flushbar(
-                          message: "Please select a directory!",
-                          margin: EdgeInsets.all(8),
-                          borderRadius: BorderRadius.circular(8),
-                          backgroundColor: Colors.red,
-                          duration: Duration(seconds: 3),
-                          flushbarPosition: FlushbarPosition.BOTTOM,
-                          flushbarStyle: FlushbarStyle.FLOATING,
-                          forwardAnimationCurve: Curves.easeOut,
-                          reverseAnimationCurve: Curves.easeInOut,
-                          icon: Icon(Icons.error, color: Colors.white),
-                        ).show(context);
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // drawer: Drawer(
+        //   backgroundColor: Color(0xFF6c6a6a),
+        //   child: SingleChildScrollView(
+        //     child: Column(
+        //       crossAxisAlignment: CrossAxisAlignment.stretch,
+        //       children: [
+        //         Container(
+        //           color: Color(0xFF464343),
+        //           padding: EdgeInsets.only(top: 60, bottom: 20),
+        //           child: Column(
+        //             children: [
+        //               Row(
+        //                 mainAxisAlignment: MainAxisAlignment.center,
+        //                 children: [
+        //                   Icon(Icons.music_note, color: Colors.white, size: 40),
+        //                   SizedBox(width: 10),
+        //                   Text(
+        //                     'MENU',
+        //                     style: TextStyle(
+        //                       color: Colors.white,
+        //                       letterSpacing: 7.0,
+        //                       fontSize: 30,
+        //                     ),
+        //                   ),
+        //                 ],
+        //               ),
+        //               SizedBox(height: 10),
+        //             ],
+        //           ),
+        //         ),
+        //         SizedBox(height: 10),
+        //         Material(
+        //           child: ListTile(
+        //             splashColor: Colors.white38,
+        //             tileColor: Color(0xFF6c6a6a),
+        //             contentPadding: EdgeInsets.symmetric(horizontal: 20),
+        //             leading: Icon(Icons.folder, color: Colors.white, size: 30),
+        //             title: Text(
+        //               'Choose directory',
+        //               style: TextStyle(
+        //                 color: Colors.white,
+        //                 letterSpacing: 1.0,
+        //                 fontSize: 20,
+        //               ),
+        //             ),
+        //             onTap: () {
+        //               chooseDirectory();
+        //               setState(() {});
+        //             },
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
