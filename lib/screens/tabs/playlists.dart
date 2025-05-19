@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/services/home_page_tab_services/playlist_list.dart';
 
-import '../../services/playlist_list.dart';
-
-class Playlists extends StatelessWidget {
+class Playlists extends StatefulWidget {
   const Playlists({super.key});
 
+  @override
+  State<Playlists> createState() => _PlaylistsState();
+}
+
+class _PlaylistsState extends State<Playlists> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

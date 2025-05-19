@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../services/music_list.dart';
+import 'package:music_player/services/home_page_tab_services/music_list.dart';
 
-class Songs extends StatelessWidget {
+class Songs extends StatefulWidget {
   const Songs({super.key});
 
+  @override
+  State<Songs> createState() => _SongsState();
+}
+
+class _SongsState extends State<Songs> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -11,7 +16,7 @@ class Songs extends StatelessWidget {
       child: Scrollbar(
         child: ListView.builder(
           primary: true,
-          itemCount: Music.length,
+          itemCount: Music_from_local_storage.length,
           itemBuilder: (context, index) {
             return Card(
               clipBehavior: Clip.hardEdge,
@@ -31,7 +36,7 @@ class Songs extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          Music[index],
+                          Music_from_local_storage[index],
                           style: TextStyle(color: Colors.white),
                         ),
                         Text('4:30', style: TextStyle(color: Colors.white)),

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/services/favorite_songs.dart';
+import 'package:music_player/services/home_page_tab_services/favorite_songs.dart';
 
-class Favorites extends StatelessWidget {
+class Favorites extends StatefulWidget {
   const Favorites({super.key});
 
+  @override
+  State<Favorites> createState() => _FavoritesState();
+}
+
+class _FavoritesState extends State<Favorites> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

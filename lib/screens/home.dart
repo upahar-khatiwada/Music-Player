@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:music_player/screens/tabs/favorites.dart';
 import 'package:music_player/screens/tabs/playlists.dart';
 import 'package:music_player/screens/tabs/songs.dart';
 import 'package:music_player/services/unfocusOnTap.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -17,7 +22,6 @@ class _HomepageState extends State<Homepage>
   late final TabController _tabController;
   late final TextEditingController _textController;
   late final FocusNode _focusNode;
-  late final ScrollController _scrollController;
 
   @override
   void initState() {
@@ -51,16 +55,121 @@ class _HomepageState extends State<Homepage>
       child: Scaffold(
         backgroundColor: Color(0xFF6c6a6a),
         appBar: AppBar(
-          leading: Icon(Icons.menu, color: Colors.white),
-          title: Text(
-            'Music Player',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          // for the menu icon's color
+          iconTheme: IconThemeData(color: Colors.white),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 48.0),
+              Icon(Icons.music_note, size: 27, color: Colors.white),
+              SizedBox(width: 5),
+              Text(
+                'Music Player',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 2.0,
+                ),
+              ),
+            ],
           ),
           centerTitle: true,
           backgroundColor: Color(0xFF464343),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Colors.black,
             statusBarBrightness: Brightness.dark,
+          ),
+        ),
+        drawer: Drawer(
+          backgroundColor: Color(0xFF6c6a6a),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  color: Color(0xFF464343),
+                  padding: EdgeInsets.only(top: 60, bottom: 20),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.music_note, color: Colors.white, size: 40),
+                          SizedBox(width: 10),
+                          Text(
+                            'MENU',
+                            style: TextStyle(
+                              color: Colors.white,
+                              letterSpacing: 7.0,
+                              fontSize: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Material(
+                  child: ListTile(
+                    splashColor: Colors.white38,
+                    tileColor: Color(0xFF6c6a6a),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                    leading: Icon(Icons.folder, color: Colors.white, size: 30),
+                    title: Text(
+                      'Choose directory',
+                      style: TextStyle(
+                        color: Colors.white,
+                        letterSpacing: 1.0,
+                        fontSize: 20,
+                      ),
+                    ),
+                    onTap: () async {
+                      String? result =
+                          await FilePicker.platform.getDirectoryPath();
+
+                      OnAudioQuery _audioQuery = OnAudioQuery();
+                      File file = File(result!);
+                      try {
+                        if (file.existsSync()) {
+                          file.deleteSync();
+                          _audioQuery.scanMedia(file.path);
+                        }
+                      } catch (e) {
+                        Flushbar(
+                          message: "Error occured while scanning: $e",
+                          margin: EdgeInsets.all(8),
+                          borderRadius: BorderRadius.circular(8),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 3),
+                          flushbarPosition: FlushbarPosition.BOTTOM,
+                          flushbarStyle: FlushbarStyle.FLOATING,
+                          forwardAnimationCurve: Curves.easeOut,
+                          reverseAnimationCurve: Curves.easeInOut,
+                          icon: Icon(Icons.error, color: Colors.white),
+                        ).show(context);
+                      }
+
+                      if (result == null) {
+                        Flushbar(
+                          message: "Please select a directory!",
+                          margin: EdgeInsets.all(8),
+                          borderRadius: BorderRadius.circular(8),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 3),
+                          flushbarPosition: FlushbarPosition.BOTTOM,
+                          flushbarStyle: FlushbarStyle.FLOATING,
+                          forwardAnimationCurve: Curves.easeOut,
+                          reverseAnimationCurve: Curves.easeInOut,
+                          icon: Icon(Icons.error, color: Colors.white),
+                        ).show(context);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         body: SafeArea(
