@@ -4,7 +4,6 @@ import 'package:music_player/screens/tabs/favorites.dart';
 import 'package:music_player/screens/tabs/playlists.dart';
 import 'package:music_player/screens/tabs/songs.dart';
 import 'package:music_player/services/unfocusOnTap.dart';
-import 'package:music_player/screens/tabs/songs.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
