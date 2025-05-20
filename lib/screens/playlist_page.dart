@@ -1,3 +1,5 @@
+// Handles the playlist page
+
 import 'package:flutter/material.dart';
 
 class playlistPage extends StatefulWidget {

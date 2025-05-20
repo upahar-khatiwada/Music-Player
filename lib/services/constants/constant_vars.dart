@@ -1,3 +1,5 @@
+// Contains the constants used across the app
+
 import 'package:flutter/material.dart';
 
 Color appbarColor = Color(0xFF464343);

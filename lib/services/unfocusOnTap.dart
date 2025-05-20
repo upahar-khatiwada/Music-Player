@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// general function to unfocus the search bar when tapped outside
 void unfocusOnTap() {
   FocusManager.instance.primaryFocus?.unfocus();
 }

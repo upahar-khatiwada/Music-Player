@@ -1,3 +1,5 @@
+// This file handles the big music playing screen
+
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
@@ -12,6 +14,7 @@ class BigPlayScreen extends StatefulWidget {
 class _BigPlayScreenState extends State<BigPlayScreen> {
   @override
   Widget build(BuildContext context) {
+    // getting the arguments from mini music player from home screen
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       appBar: AppBar(

@@ -1,3 +1,5 @@
+// This file handles the playlists created by the user
+
 import 'package:flutter/material.dart';
 import 'package:music_player/services/home_page_tab_services/playlist_list.dart';
 

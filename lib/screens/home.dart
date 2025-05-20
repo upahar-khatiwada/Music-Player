@@ -1,3 +1,5 @@
+// This page is for the home page
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:music_player/screens/tabs/favorites.dart';
@@ -14,9 +16,10 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-  late final TextEditingController _textController;
-  late final FocusNode _focusNode;
+  late final TabController _tabController; // The tab controller
+  late final TextEditingController
+  _textController; // Text controller for handling search bar
+  late final FocusNode _focusNode; // for focusing in the search bar
 
   @override
   void initState() {
@@ -27,10 +30,10 @@ class _HomepageState extends State<Homepage>
       animationDuration: Duration(milliseconds: 400),
     );
 
-    // Controller for the text in Search Bar
+    // controller for the text in Search Bar
     _textController = TextEditingController();
 
-    // Focus Node for focusing in the search bar
+    // focus node for focusing in the search bar
     _focusNode = FocusNode();
 
     super.initState();
@@ -75,6 +78,8 @@ class _HomepageState extends State<Homepage>
             statusBarBrightness: Brightness.dark,
           ),
         ),
+
+        // removed drawer as it was getting complicated to choose custom directory
         // drawer: Drawer(
         //   backgroundColor: Color(0xFF6c6a6a),
         //   child: SingleChildScrollView(
@@ -154,7 +159,7 @@ class _HomepageState extends State<Homepage>
                       color: Color(0xFF464343),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withAlpha(26),
                           spreadRadius: 2,
                           blurRadius: 2,
                           offset: Offset(0, 2),

@@ -1,9 +1,11 @@
+// This file handles the mini player in the bottom of the screen
+
 import 'package:flutter/material.dart';
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 
 class miniPlayerHome extends StatefulWidget {
   final String songTitle;
-  final songDuration_double;
+  final songDuration_double; // data type is double
   final bool isPlayPressed;
   const miniPlayerHome({
     super.key,
@@ -21,6 +23,7 @@ class _miniPlayerHomeState extends State<miniPlayerHome> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // pushes a new screen for a better and bigger music playing UI
         Navigator.pushNamed(
           context,
           '/bigPlayScreen',

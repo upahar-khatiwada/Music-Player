@@ -1,7 +1,9 @@
+// helper file to display a flushbar to display some messages
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
-void displayFlushbar(
+void displayFlushBar(
   BuildContext context,
   String message,
   Color color,

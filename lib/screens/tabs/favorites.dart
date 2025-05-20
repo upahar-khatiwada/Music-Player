@@ -1,3 +1,6 @@
+// This tab holds the favorites songs of the user
+
+import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/services/home_page_tab_services/favorite_songs.dart';
 
@@ -65,9 +68,19 @@ class _FavoritesState extends State<Favorites> {
       );
     } else {
       return Center(
-        child: Text(
-          'No favorites found!',
-          style: TextStyle(color: Colors.white, fontSize: 40),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Icon(Icons.close, color: Colors.red, size: 50),
+              SizedBox(width: 10),
+              AutoScrollText(
+                'No favorites found!',
+                style: TextStyle(color: Colors.white, fontSize: 35),
+                mode: AutoScrollTextMode.endless,
+              ),
+            ],
+          ),
         ),
       );
     }
