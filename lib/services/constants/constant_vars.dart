@@ -2,5 +2,13 @@
 
 import 'package:flutter/material.dart';
 
-Color appbarColor = Color(0xFF464343);
-Color bgColor = Color(0xFF6c6a6a);
+Color appbarColor = const Color(0xFF464343);
+Color bgColor = const Color(0xFF6c6a6a);
+
+// Colors for loop control
+Color notInLoop = Colors.white;
+Color inLoop = Colors.greenAccent;
+
+// Colors for shuffle control
+Color inShuffle = Colors.greenAccent;
+Color notInShuffle = Colors.white;

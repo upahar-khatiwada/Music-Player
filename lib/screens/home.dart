@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:music_player/screens/tabs/favorites.dart';
 import 'package:music_player/screens/tabs/playlists.dart';
 import 'package:music_player/screens/tabs/songs.dart';
+import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/unfocused_on_tap.dart';
 
 class Homepage extends StatefulWidget {
@@ -27,7 +28,7 @@ class _HomepageState extends State<Homepage>
     _tabController = TabController(
       length: 3,
       vsync: this,
-      animationDuration: Duration(milliseconds: 400),
+      animationDuration: const Duration(milliseconds: 400),
     );
 
     // controller for the text in Search Bar
@@ -49,13 +50,13 @@ class _HomepageState extends State<Homepage>
 
   @override
   Widget build(BuildContext context) {
-    return UnfocusOnTap(
+    return UnfocusedOnTap(
       child: Scaffold(
-        backgroundColor: Color(0xFF6c6a6a),
+        backgroundColor: bgColor,
         appBar: AppBar(
           // for the menu icon's color
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Row(
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // SizedBox(width: 48.0),
@@ -72,8 +73,8 @@ class _HomepageState extends State<Homepage>
             ],
           ),
           centerTitle: true,
-          backgroundColor: Color(0xFF464343),
-          systemOverlayStyle: SystemUiOverlayStyle(
+          backgroundColor: appbarColor,
+          systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.black,
             statusBarBrightness: Brightness.dark,
           ),
@@ -139,8 +140,8 @@ class _HomepageState extends State<Homepage>
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
-              children: [
-                Text(
+              children: <Widget>[
+                const Text(
                   'Welcome Back!',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -148,37 +149,40 @@ class _HomepageState extends State<Homepage>
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Center(
                   child: Container(
                     height: 50,
                     width: MediaQuery.of(context).size.width / 1.1,
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      color: Color(0xFF464343),
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      color: appbarColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withAlpha(26),
                           spreadRadius: 2,
                           blurRadius: 2,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: TextField(
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(12),
-                        suffixIcon: Icon(Icons.search, color: Colors.white),
+                        contentPadding: const EdgeInsets.all(12),
+                        suffixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
                         hintText: 'Search songs..',
-                        hintStyle: TextStyle(color: Colors.white),
+                        hintStyle: const TextStyle(color: Colors.white),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Colors.white38,
                             width: 1,
                           ),
@@ -186,7 +190,7 @@ class _HomepageState extends State<Homepage>
                         focusColor: Colors.white38,
                       ),
                       controller: _textController,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       autocorrect: false,
                       // autofocus: true,
                       cursorColor: Colors.white,
@@ -197,16 +201,18 @@ class _HomepageState extends State<Homepage>
                 ),
                 TabBar(
                   splashFactory: InkRipple.splashFactory,
-                  splashBorderRadius: BorderRadius.all(Radius.circular(10)),
-                  overlayColor: WidgetStatePropertyAll(Colors.white38),
+                  splashBorderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  overlayColor: const WidgetStatePropertyAll(Colors.white38),
                   controller: _tabController,
                   indicatorColor: Colors.white,
-                  indicator: BoxDecoration(
+                  indicator: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(color: Colors.white, width: 2),
                     ),
                   ),
-                  tabs: [
+                  tabs: const <Widget>[
                     Tab(
                       child: Row(
                         children: [
@@ -246,7 +252,7 @@ class _HomepageState extends State<Homepage>
                 Flexible(
                   child: TabBarView(
                     controller: _tabController,
-                    children: [Songs(), Favorites(), Playlists()],
+                    children: const <Widget>[Songs(), Favorites(), Playlists()],
                   ),
                   // ListTile(
                   //   leading: Icon(Icons.music_note, color: Colors.white),

@@ -15,12 +15,13 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
   @override
   Widget build(BuildContext context) {
     // getting the arguments from mini music player from home screen
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    final Map<dynamic, dynamic> args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appbarColor,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
           'PLAYING FROM YOUR LIBRARY',
           style: TextStyle(color: Colors.white),
         ),
@@ -31,7 +32,7 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
         child: Column(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            Text(
+            const Text(
               'Now Playing',
               style: TextStyle(
                 color: Colors.white,
@@ -41,14 +42,17 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Container(
-              decoration: BoxDecoration(color: Colors.grey),
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(12),
+              ),
               height: MediaQuery.of(context).size.height * 0.4,
               width: MediaQuery.of(context).size.width * 0.9,
               margin: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.09,
                 right: MediaQuery.of(context).size.width * 0.09,
               ),
-              child: Center(
+              child: const Center(
                 child: FittedBox(
                   fit: BoxFit.contain,
                   child: Icon(Icons.music_note, color: Colors.white, size: 300),
@@ -60,12 +64,12 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
               padding: const EdgeInsets.only(left: 15.0, right: 15.0),
               child: AutoScrollText(
                 args['songTitle'],
-                style: TextStyle(color: Colors.white, fontSize: 25),
+                style: const TextStyle(color: Colors.white, fontSize: 25),
                 mode: AutoScrollTextMode.endless,
               ),
             ),
             Slider(
-              value: args['songDuration_double'],
+              value: args['songDurationDouble'],
               activeColor: Colors.white,
               inactiveColor: Colors.grey,
               min: 0.0,
@@ -78,23 +82,27 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
               children: [
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.shuffle, color: Colors.white, size: 35),
+                  icon: Icon(Icons.shuffle, color: inShuffle, size: 35),
                 ),
                 IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios_rounded,
+                  icon: const Icon(
+                    Icons.skip_previous,
                     color: Colors.white,
                     size: 35,
                   ),
                   onPressed: () {},
                 ),
                 IconButton(
-                  icon: Icon(Icons.play_circle, color: Colors.white, size: 52),
+                  icon: const Icon(
+                    Icons.play_circle,
+                    color: Colors.white,
+                    size: 52,
+                  ),
                   onPressed: () {},
                 ),
                 IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_ios_rounded,
+                  icon: const Icon(
+                    Icons.skip_next,
                     color: Colors.white,
                     size: 35,
                   ),
@@ -102,7 +110,7 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.loop, color: Colors.white, size: 35),
+                  icon: Icon(Icons.loop, color: inLoop, size: 35),
                 ),
               ],
             ),

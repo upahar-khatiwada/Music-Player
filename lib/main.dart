@@ -35,10 +35,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {
-        '/': (context) => Homepage(),
-        '/playlist_page': (context) => PlaylistPage(),
-        '/bigPlayScreen': (context) => BigPlayScreen(),
+      routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => const Homepage(),
+        '/playlist_page': (BuildContext context) => const PlaylistPage(),
+        '/bigPlayScreen': (BuildContext context) => const BigPlayScreen(),
       },
       theme: ThemeData(splashColor: Colors.white, primaryColor: Colors.white),
     );
