@@ -37,7 +37,7 @@ class _FavoritesState extends State<Favorites> {
                     ),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: <Widget>[
                         Expanded(
                           child: Tooltip(
                             message: favoriteSongs.elementAt(index),
@@ -51,7 +51,7 @@ class _FavoritesState extends State<Favorites> {
                           ),
                         ),
                         IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.play_circle,
                             color: Colors.white,
                             size: 27,
@@ -68,17 +68,22 @@ class _FavoritesState extends State<Favorites> {
         ),
       );
     } else {
-      return const Center(
+      return Center(
         child: Padding(
           padding: EdgeInsets.all(8.0),
           child: Row(
             children: <Widget>[
-              Icon(Icons.close, color: Colors.red, size: 50),
-              SizedBox(width: 10),
-              AutoScrollText(
-                'No favorites found!',
-                style: TextStyle(color: Colors.white, fontSize: 35),
-                mode: AutoScrollTextMode.endless,
+              const Icon(Icons.close, color: Colors.red, size: 50),
+              const SizedBox(width: 10),
+              FittedBox(
+                fit: BoxFit.contain,
+                child: Text(
+                  'No favorites found!',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.04,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),

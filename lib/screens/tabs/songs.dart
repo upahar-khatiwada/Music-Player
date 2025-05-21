@@ -156,10 +156,7 @@ class _SongsState extends State<Songs> {
                                   } else {
                                     isPlaying[index] = false;
                                     playButton[index] = Icons.play_circle;
-                                    pauseAudioFromLocalStorage(
-                                      audioPlayer,
-                                      item.data![index].uri,
-                                    );
+                                    pauseAudioFromLocalStorage(audioPlayer);
                                   }
                                 });
                               },
