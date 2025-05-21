@@ -1,4 +1,5 @@
 // This file handles the big music playing screen
+// TODO: REDUNDANT FILE
 
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +13,40 @@ class BigPlayScreen extends StatefulWidget {
 }
 
 class _BigPlayScreenState extends State<BigPlayScreen> {
+  late IconData icon;
+  late VoidCallback onPlayPause;
+  late final Map<String, dynamic> args;
+
+  // @override
+  // void didChangeDependencies() {
+  //   // TODO: implement didChangeDependencies
+  //   super.didChangeDependencies();
+  //   args =
+  //   ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+  //
+  //   icon = args['icon'];
+  //   onPlayPause = () {
+  //     args['onPlayPause']();
+  //
+  //     setState(() {
+  //       final bool isPlayPressed = args['isPlayPressed'];
+  //       icon = isPlayPressed ? Icons.pause_circle : Icons.play_circle;
+  //     });
+  //   };
+  // }
+
   @override
   Widget build(BuildContext context) {
     // getting the arguments from mini music player from home screen
-    final Map<dynamic, dynamic> args =
+    final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    onPlayPause =
+        args['onPlayPause']; // calls the parent widget for updating the parameters globally
+
+    final ValueNotifier<IconData> iconNotifier =
+        args['iconNotifier'] as ValueNotifier<IconData>;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appbarColor,
@@ -30,7 +60,7 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
       backgroundColor: bgColor,
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             const Text(
               'Now Playing',
@@ -63,13 +93,13 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 15.0, right: 15.0),
               child: AutoScrollText(
-                args['songTitle'],
+                args['songModel'].displayNameWOExt,
                 style: const TextStyle(color: Colors.white, fontSize: 25),
                 mode: AutoScrollTextMode.endless,
               ),
             ),
             Slider(
-              value: args['songDurationDouble'],
+              value: 0,
               activeColor: Colors.white,
               inactiveColor: Colors.grey,
               min: 0.0,
@@ -92,14 +122,28 @@ class _BigPlayScreenState extends State<BigPlayScreen> {
                   ),
                   onPressed: () {},
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.play_circle,
-                    color: Colors.white,
-                    size: 52,
-                  ),
-                  onPressed: () {},
+                ValueListenableBuilder<IconData>(
+                  valueListenable: iconNotifier,
+                  builder: (BuildContext context, IconData icon, _) {
+                    return IconButton(
+                      onPressed: onPlayPause,
+                      icon: Icon(icon, color: Colors.white, size: 52),
+                    );
+                  },
                 ),
+                // IconButton(
+                //   icon: Icon(
+                //     args['isPlayPressed']
+                //         ? Icons.pause_circle
+                //         : Icons.play_circle,
+                //     color: Colors.white,
+                //     size: 52,
+                //   ),
+                //   onPressed: () {
+                //     onPlayPause();
+                //     setState(() {});
+                //   },
+                // ),
                 IconButton(
                   icon: const Icon(
                     Icons.skip_next,

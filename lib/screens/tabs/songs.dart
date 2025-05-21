@@ -1,7 +1,9 @@
 // This file is responsible for getting the songs from the local storage
 
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
+import 'package:music_player/services/helper_functions/play_audio_from_local_storage.dart';
 import 'package:music_player/services/home_page_tab_services/favorite_songs.dart';
 import 'package:music_player/services/home_page_tab_services/music_list.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -20,18 +22,8 @@ class Songs extends StatefulWidget {
 class _SongsState extends State<Songs> {
   final OnAudioQuery _audioQuery = OnAudioQuery();
   bool showMiniPlayer = false; // boolean to show the miniPlayer
-  String currentSongTitle = ''; // grabs the current song's title
-  int? currentSongDuration; // grabs the current song's duration in int
   int? currentSongIndex; // grabs the current song's index from the list
-  late double
-  currentDurationDouble; // Converting the duration to double for managing the slider
-
-  @override
-  void initState() {
-    // converts the duration to double
-    currentDurationDouble = (currentSongDuration ?? 0) / 1000.0;
-    super.initState();
-  }
+  AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +56,6 @@ class _SongsState extends State<Songs> {
             }
             // Assigning the available music
             musicFromLocalStorage = item.data!;
-
             // if condition to avoid rebuilding the list
             if (favoriteSongsLiked.length != item.data!.length) {
               favoriteSongsLiked = List<Color>.filled(
@@ -147,10 +138,7 @@ class _SongsState extends State<Songs> {
                                   bool isCurrentlyPlaying = isPlaying[index];
 
                                   showMiniPlayer = true;
-                                  currentSongTitle =
-                                      item.data![index].displayNameWOExt;
-                                  currentSongDuration =
-                                      item.data![index].duration;
+
                                   // responsible for changing previous song's pause button back to play button when a new song is played
                                   // changes every boolean to false
                                   for (int i = 0; i < isPlaying.length; i++) {
@@ -161,9 +149,17 @@ class _SongsState extends State<Songs> {
                                   if (!isCurrentlyPlaying) {
                                     isPlaying[index] = true;
                                     playButton[index] = Icons.pause_circle;
+                                    playAudioFromLocalStorage(
+                                      audioPlayer,
+                                      item.data![index].uri,
+                                    );
                                   } else {
                                     isPlaying[index] = false;
                                     playButton[index] = Icons.play_circle;
+                                    pauseAudioFromLocalStorage(
+                                      audioPlayer,
+                                      item.data![index].uri,
+                                    );
                                   }
                                 });
                               },
@@ -190,12 +186,38 @@ class _SongsState extends State<Songs> {
           child: Align(
             alignment: Alignment.bottomCenter,
             child: MiniPlayerHome(
-              songTitle: currentSongTitle,
-              songDurationDouble: currentDurationDouble,
               isPlayPressed:
                   currentSongIndex != null
                       ? isPlaying[currentSongIndex!]
                       : false,
+              songModel:
+                  currentSongIndex != null
+                      ? (musicFromLocalStorage?[currentSongIndex!])
+                      : null,
+              icon:
+                  currentSongIndex != null
+                      ? playButton[currentSongIndex!]
+                      : Icons.play_circle,
+              audioPlayer: audioPlayer,
+              onPlayPause: () {
+                setState(() {
+                  if (currentSongIndex != null) {
+                    isPlaying[currentSongIndex!] =
+                        !isPlaying[currentSongIndex!];
+                    playButton[currentSongIndex!] =
+                        isPlaying[currentSongIndex!]
+                            ? Icons.pause_circle
+                            : Icons.play_circle;
+
+                    if (isPlaying[currentSongIndex!]) {
+                      audioPlayer.play();
+                    } else {
+                      audioPlayer.pause();
+                    }
+                  }
+                });
+              },
+              // onPlayPause: onPlayPause,
             ),
           ),
         ),
