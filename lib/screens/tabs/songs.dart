@@ -76,11 +76,11 @@ class _SongsState extends State<Songs> {
             }
 
             // debugging/checking
-            logger.i(musicFromLocalStorage);
-            logger.i(favoriteSongsLiked);
-            for (SongModel song in musicFromLocalStorage!) {
-              logger.i('title: ${song.displayNameWOExt}');
-            }
+            // logger.i(musicFromLocalStorage);
+            // logger.i(favoriteSongsLiked);
+            // for (SongModel song in musicFromLocalStorage!) {
+            //   logger.i('title: ${song.displayNameWOExt}');
+            // }
 
             // Main UI building logic
             return Padding(
