@@ -2,17 +2,27 @@
 
 import 'package:flutter/material.dart';
 import 'package:auto_scroll_text/auto_scroll_text.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:logger/logger.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+
+final Logger logger = Logger();
 
 class MiniPlayerHome extends StatefulWidget {
-  final String songTitle;
-  final songDurationDouble; // data type is double
+  final IconData? icon;
+  final SongModel? songModel;
   final bool isPlayPressed;
+  final AudioPlayer audioPlayer;
+  final VoidCallback onPlayPause;
+
   const MiniPlayerHome({
     super.key,
-    required this.songTitle,
-    required this.songDurationDouble,
     required this.isPlayPressed,
+    required this.songModel,
+    required this.icon,
+    required this.audioPlayer,
+    required this.onPlayPause,
   });
 
   @override
@@ -29,9 +39,10 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
           context,
           '/bigPlayScreen',
           arguments: <String, dynamic>{
-            'songTitle': widget.songTitle,
-            'songDurationDouble': widget.songDurationDouble,
+            'songModel': widget.songModel,
             'isPlayPressed': widget.isPlayPressed,
+            'onPlayPause': widget.onPlayPause,
+            // 'iconNotifier': widget.iconNotifier,
           },
         );
       },
@@ -54,7 +65,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                   // child: Tooltip(
                   //   message: widget.songTitle,
                   child: AutoScrollText(
-                    widget.songTitle,
+                    widget.songModel!.displayNameWOExt,
                     style: const TextStyle(fontSize: 19, color: Colors.white),
                     mode: AutoScrollTextMode.endless,
                     // ),
@@ -77,15 +88,18 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                   ),
                   onPressed: () {},
                 ),
+                // ValueListenableBuilder<IconData>(
+                //   valueListenable: widget.iconNotifier,
+                //   builder: (BuildContext context, IconData icon, _) {
+                //     return IconButton(
+                //       icon: Icon(icon, color: Colors.white, size: 30),
+                //       onPressed: widget.onPlayPause,
+                //     );
+                //   },
+                // ),
                 IconButton(
-                  icon: Icon(
-                    widget.isPlayPressed
-                        ? Icons.pause_circle
-                        : Icons.play_circle,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: () {},
+                  icon: Icon(widget.icon, color: Colors.white, size: 30),
+                  onPressed: widget.onPlayPause,
                 ),
                 IconButton(
                   icon: const Icon(
