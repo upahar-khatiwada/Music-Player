@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => Homepage(),
-        '/playlist_page': (context) => playlistPage(),
+        '/playlist_page': (context) => PlaylistPage(),
         '/bigPlayScreen': (context) => BigPlayScreen(),
       },
       theme: ThemeData(splashColor: Colors.white, primaryColor: Colors.white),

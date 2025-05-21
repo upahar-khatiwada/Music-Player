@@ -3,22 +3,22 @@
 import 'package:flutter/material.dart';
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 
-class miniPlayerHome extends StatefulWidget {
+class MiniPlayerHome extends StatefulWidget {
   final String songTitle;
-  final songDuration_double; // data type is double
+  final songDurationDouble; // data type is double
   final bool isPlayPressed;
-  const miniPlayerHome({
+  const MiniPlayerHome({
     super.key,
     required this.songTitle,
-    required this.songDuration_double,
+    required this.songDurationDouble,
     required this.isPlayPressed,
   });
 
   @override
-  State<miniPlayerHome> createState() => _miniPlayerHomeState();
+  State<MiniPlayerHome> createState() => _MiniPlayerHomeState();
 }
 
-class _miniPlayerHomeState extends State<miniPlayerHome> {
+class _MiniPlayerHomeState extends State<MiniPlayerHome> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -29,7 +29,7 @@ class _miniPlayerHomeState extends State<miniPlayerHome> {
           '/bigPlayScreen',
           arguments: {
             'songTitle': widget.songTitle,
-            'songDuration_double': widget.songDuration_double,
+            'songDuration_double': widget.songDurationDouble,
             'isPlayPressed': widget.isPlayPressed,
           },
         );

@@ -19,7 +19,7 @@ class _PlaylistsState extends State<Playlists> {
         padding: EdgeInsets.all(10),
         child: Scrollbar(
           child: ListView.builder(
-            itemCount: playlist_list.length,
+            itemCount: playlistList.length,
             itemBuilder: (context, index) {
               return Card(
                 clipBehavior: Clip.hardEdge,
@@ -31,7 +31,7 @@ class _PlaylistsState extends State<Playlists> {
                   focusColor: Colors.grey,
                   splashColor: Colors.white10,
                   title: Text(
-                    playlist_list[index],
+                    playlistList[index],
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

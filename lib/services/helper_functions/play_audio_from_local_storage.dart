@@ -1,7 +1,9 @@
 // file to handle the backend
 
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/services/helper_functions/flushbar_message.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 void playAudioFromLocalStorage(String? audioPath) async {
   final AudioPlayer player = AudioPlayer();
@@ -9,6 +11,6 @@ void playAudioFromLocalStorage(String? audioPath) async {
     player.setAudioSource(AudioSource.uri(Uri.parse(audioPath!)));
     player.play();
   } catch (e) {
-    print("Error playing song: $e");
+    logger.e('Error playing song: $e');
   }
 }

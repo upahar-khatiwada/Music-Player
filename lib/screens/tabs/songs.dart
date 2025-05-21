@@ -5,8 +5,10 @@ import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/home_page_tab_services/favorite_songs.dart';
 import 'package:music_player/services/home_page_tab_services/music_list.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:music_player/services/helper_functions/play_audio_from_local_storage.dart';
-import 'package:music_player/screens/mini_player/miniPlayer.dart';
+import 'package:music_player/screens/mini_player/mini_player.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class Songs extends StatefulWidget {
   const Songs({super.key});
@@ -22,12 +24,12 @@ class _SongsState extends State<Songs> {
   int? currentSongDuration; // grabs the current song's duration in int
   int? currentSongIndex; // grabs the current song's index from the list
   late double
-  currentDuration_double; // Converting the duration to double for managing the slider
+  currentDurationDouble; // Converting the duration to double for managing the slider
 
   @override
   void initState() {
     // converts the duration to double
-    currentDuration_double = (currentSongDuration ?? 0) / 1000.0;
+    currentDurationDouble = (currentSongDuration ?? 0) / 1000.0;
     super.initState();
   }
 
@@ -61,7 +63,7 @@ class _SongsState extends State<Songs> {
               );
             }
             // Assigning the available music
-            Music_from_local_storage = item.data!;
+            musicFromLocalStorage = item.data!;
 
             // if condition to avoid rebuilding the list
             if (favoriteSongsLiked.length != item.data!.length) {
@@ -83,10 +85,10 @@ class _SongsState extends State<Songs> {
             }
 
             // debugging/checking
-            print(Music_from_local_storage);
-            print(favoriteSongsLiked);
-            for (var song in Music_from_local_storage!) {
-              print("title: ${song.displayName}");
+            logger.i(musicFromLocalStorage);
+            logger.i(favoriteSongsLiked);
+            for (var song in musicFromLocalStorage!) {
+              logger.i('title: ${song.displayName}');
             }
 
             // Main UI building logic
@@ -180,9 +182,9 @@ class _SongsState extends State<Songs> {
           visible: showMiniPlayer,
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: miniPlayerHome(
+            child: MiniPlayerHome(
               songTitle: currentSongTitle,
-              songDuration_double: currentDuration_double,
+              songDurationDouble: currentDurationDouble,
               isPlayPressed:
                   currentSongIndex != null
                       ? isPlaying[currentSongIndex!]
