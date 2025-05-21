@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:auto_scroll_text/auto_scroll_text.dart';
+import 'package:music_player/services/constants/constant_vars.dart';
 
 class MiniPlayerHome extends StatefulWidget {
   final String songTitle;
@@ -27,9 +28,9 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
         Navigator.pushNamed(
           context,
           '/bigPlayScreen',
-          arguments: {
+          arguments: <String, dynamic>{
             'songTitle': widget.songTitle,
-            'songDuration_double': widget.songDurationDouble,
+            'songDurationDouble': widget.songDurationDouble,
             'isPlayPressed': widget.isPlayPressed,
           },
         );
@@ -40,21 +41,21 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
           borderRadius: BorderRadius.circular(12),
           color: Colors.grey[500],
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         // padding: EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Row(
-              children: [
-                Icon(Icons.music_note, color: Colors.white, size: 25),
-                SizedBox(width: 10),
+              children: <Widget>[
+                const Icon(Icons.music_note, color: Colors.white, size: 25),
+                const SizedBox(width: 10),
                 Flexible(
                   // child: Tooltip(
                   //   message: widget.songTitle,
                   child: AutoScrollText(
                     widget.songTitle,
-                    style: TextStyle(fontSize: 19, color: Colors.white),
+                    style: const TextStyle(fontSize: 19, color: Colors.white),
                     mode: AutoScrollTextMode.endless,
                     // ),
                   ),
@@ -63,34 +64,40 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
+              children: <Widget>[
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.shuffle, color: Colors.white, size: 25),
+                  icon: Icon(Icons.shuffle, color: inShuffle, size: 25),
                 ),
                 IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios_rounded,
+                  icon: const Icon(
+                    Icons.skip_previous,
                     color: Colors.white,
-                    size: 25,
+                    size: 30,
                   ),
                   onPressed: () {},
                 ),
                 IconButton(
-                  icon: Icon(Icons.play_arrow, color: Colors.white, size: 32),
+                  icon: Icon(
+                    widget.isPlayPressed
+                        ? Icons.pause_circle
+                        : Icons.play_circle,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                   onPressed: () {},
                 ),
                 IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_ios_rounded,
+                  icon: const Icon(
+                    Icons.skip_next,
                     color: Colors.white,
-                    size: 25,
+                    size: 30,
                   ),
                   onPressed: () {},
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.loop, color: Colors.white, size: 25),
+                  icon: Icon(Icons.loop, color: inLoop, size: 25),
                 ),
               ],
             ),

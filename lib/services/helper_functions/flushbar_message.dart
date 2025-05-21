@@ -11,10 +11,10 @@ void displayFlushBar(
 ) {
   Flushbar(
     message: message,
-    margin: EdgeInsets.all(10),
+    margin: const EdgeInsets.all(10),
     borderRadius: BorderRadius.circular(8),
     backgroundColor: color,
-    duration: Duration(seconds: 3),
+    duration: const Duration(seconds: 3),
     flushbarPosition: FlushbarPosition.BOTTOM, // Shows at the bottom
     flushbarStyle: FlushbarStyle.FLOATING, // Floats over the UI
     forwardAnimationCurve: Curves.easeOut,

@@ -8,7 +8,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:music_player/screens/mini_player/mini_player.dart';
 import 'package:logger/logger.dart';
 
-final logger = Logger();
+final Logger logger = Logger();
 
 class Songs extends StatefulWidget {
   const Songs({super.key});
@@ -37,7 +37,7 @@ class _SongsState extends State<Songs> {
   Widget build(BuildContext context) {
     // stack for handling the mini player
     return Stack(
-      children: [
+      children: <Widget>[
         // This future fetches the device's songs and might build the UI multiple times
         FutureBuilder<List<SongModel>>(
           future: _audioQuery.querySongs(
@@ -46,16 +46,16 @@ class _SongsState extends State<Songs> {
             orderType: OrderType.ASC_OR_SMALLER,
             uriType: UriType.EXTERNAL,
           ),
-          builder: (context, item) {
+          builder: (BuildContext context, AsyncSnapshot<List<SongModel>> item) {
             // error handling
             if (item.data == null) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(color: Colors.white),
               );
             }
             // error handling
             if (item.data!.isEmpty) {
-              return Center(
+              return const Center(
                 child: Text(
                   'No songs found!',
                   style: TextStyle(color: Colors.white),
@@ -87,8 +87,8 @@ class _SongsState extends State<Songs> {
             // debugging/checking
             logger.i(musicFromLocalStorage);
             logger.i(favoriteSongsLiked);
-            for (var song in musicFromLocalStorage!) {
-              logger.i('title: ${song.displayName}');
+            for (SongModel song in musicFromLocalStorage!) {
+              logger.i('title: ${song.displayNameWOExt}');
             }
 
             // Main UI building logic
@@ -98,7 +98,7 @@ class _SongsState extends State<Songs> {
                 child: ListView.builder(
                   primary: true,
                   itemCount: item.data!.length,
-                  itemBuilder: (context, index) {
+                  itemBuilder: (BuildContext context, int index) {
                     return Card(
                       clipBehavior: Clip.hardEdge,
                       color: appbarColor,
@@ -114,10 +114,10 @@ class _SongsState extends State<Songs> {
                                     : liked;
                             favoriteSongsLiked[index] == liked
                                 ? favoriteSongs.add(
-                                  item.data![index].displayName,
+                                  item.data![index].displayNameWOExt,
                                 )
                                 : favoriteSongs.remove(
-                                  item.data![index].displayName,
+                                  item.data![index].displayNameWOExt,
                                 );
                             // rebuilds the UI and changes the icon's color to red
                             setState(() {});
@@ -129,13 +129,13 @@ class _SongsState extends State<Songs> {
                         ),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                          children: <Widget>[
                             Flexible(
                               child: Tooltip(
                                 message: item.data![index].displayName,
                                 child: Text(
                                   item.data![index].displayNameWOExt,
-                                  style: TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -143,9 +143,12 @@ class _SongsState extends State<Songs> {
                             IconButton(
                               onPressed: () {
                                 setState(() {
+                                  // for changing icons
+                                  bool isCurrentlyPlaying = isPlaying[index];
+
                                   showMiniPlayer = true;
                                   currentSongTitle =
-                                      item.data![index].displayName;
+                                      item.data![index].displayNameWOExt;
                                   currentSongDuration =
                                       item.data![index].duration;
                                   // responsible for changing previous song's pause button back to play button when a new song is played
@@ -154,10 +157,14 @@ class _SongsState extends State<Songs> {
                                     isPlaying[i] = false;
                                     playButton[i] = Icons.play_circle;
                                   }
-                                  // finally assigns the selected song's boolean to true to change to pause icon
-                                  isPlaying[index] = true;
-                                  playButton[index] = Icons.pause_circle;
                                   currentSongIndex = index;
+                                  if (!isCurrentlyPlaying) {
+                                    isPlaying[index] = true;
+                                    playButton[index] = Icons.pause_circle;
+                                  } else {
+                                    isPlaying[index] = false;
+                                    playButton[index] = Icons.play_circle;
+                                  }
                                 });
                               },
                               icon: Icon(

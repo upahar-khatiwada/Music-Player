@@ -2,6 +2,7 @@
 
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:flutter/material.dart';
+import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/home_page_tab_services/favorite_songs.dart';
 
 class Favorites extends StatefulWidget {
@@ -16,23 +17,23 @@ class _FavoritesState extends State<Favorites> {
   Widget build(BuildContext context) {
     if (favoriteSongs.isNotEmpty) {
       return Scaffold(
-        backgroundColor: Color(0xFF6c6a6a),
+        backgroundColor: bgColor,
         body: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Scrollbar(
             child: ListView.builder(
               itemCount: favoriteSongs.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (BuildContext context, int index) {
                 return Card(
                   clipBehavior: Clip.hardEdge,
-                  color: Color(0xFF464343),
+                  color: appbarColor,
                   child: ListTile(
                     onTap: () {},
                     focusColor: Colors.grey,
                     splashColor: Colors.white10,
                     leading: IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.favorite, color: Colors.red),
+                      icon: const Icon(Icons.favorite, color: Colors.red),
                     ),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -42,7 +43,7 @@ class _FavoritesState extends State<Favorites> {
                             message: favoriteSongs.elementAt(index),
                             child: Text(
                               favoriteSongs.elementAt(index),
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               softWrap: false,
@@ -67,11 +68,11 @@ class _FavoritesState extends State<Favorites> {
         ),
       );
     } else {
-      return Center(
+      return const Center(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8.0),
           child: Row(
-            children: [
+            children: <Widget>[
               Icon(Icons.close, color: Colors.red, size: 50),
               SizedBox(width: 10),
               AutoScrollText(
