@@ -13,7 +13,7 @@ void playAudioFromLocalStorage(AudioPlayer player, String? audioPath) async {
   }
 }
 
-void pauseAudioFromLocalStorage(AudioPlayer player, String? audioPath) async {
+void pauseAudioFromLocalStorage(AudioPlayer player) async {
   try {
     await player.pause();
   } catch (e) {

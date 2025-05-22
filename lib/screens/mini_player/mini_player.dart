@@ -1,5 +1,7 @@
 // This file handles the mini player in the bottom of the screen
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:just_audio/just_audio.dart';
@@ -31,7 +33,8 @@ class MiniPlayerHome extends StatefulWidget {
 }
 
 class _MiniPlayerHomeState extends State<MiniPlayerHome> {
-  late final double? songDuration;
+  late StreamSubscription<Duration> positionSubscription;
+  late double? songDuration;
   double currentSliderValue = 0;
 
   @override
@@ -40,12 +43,20 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
     super.initState();
     songDuration = widget.songModel!.duration?.toDouble();
     // logger.i('Formatted: ${formatDuration(songDuration!)}');
+
+    positionSubscription = widget.audioPlayer.positionStream.listen((
+      Duration p,
+    ) {
+      setState(() {
+        currentSliderValue = p.inMilliseconds.toDouble();
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.16,
+      height: MediaQuery.of(context).size.height * 0.17,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.grey[500],
@@ -63,7 +74,10 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                 //   message: widget.songTitle,
                 child: AutoScrollText(
                   widget.songModel!.displayNameWOExt,
-                  style: const TextStyle(fontSize: 19, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.02,
+                    color: Colors.white,
+                  ),
                   mode: AutoScrollTextMode.endless,
                   // ),
                 ),
@@ -74,15 +88,23 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
             children: <Widget>[
               Text(
                 formatDuration(currentSliderValue),
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: MediaQuery.of(context).size.height * 0.02,
+                ),
               ),
               Expanded(
                 child: Slider(
-                  value: currentSliderValue,
+                  value: currentSliderValue.clamp(0, songDuration!),
                   onChanged: (double? val) {
                     setState(() {
                       currentSliderValue = val!;
                     });
+                  },
+                  onChangeEnd: (double value) {
+                    widget.audioPlayer.seek(
+                      Duration(milliseconds: value.toInt()),
+                    );
                   },
                   activeColor: Colors.white,
                   inactiveColor: Colors.blueGrey,
@@ -94,7 +116,10 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
               ),
               Text(
                 formatDuration(songDuration!),
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: MediaQuery.of(context).size.height * 0.02,
+                ),
               ),
             ],
           ),
@@ -103,31 +128,43 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
             children: <Widget>[
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.shuffle, color: inShuffle, size: 30),
+                icon: Icon(
+                  Icons.shuffle,
+                  color: inShuffle,
+                  size: MediaQuery.of(context).size.height * 0.03,
+                ),
               ),
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.skip_previous,
                   color: Colors.white,
-                  size: 35,
+                  size: MediaQuery.of(context).size.height * 0.03,
                 ),
                 onPressed: () {},
               ),
               IconButton(
-                icon: Icon(widget.icon, color: Colors.white, size: 35),
+                icon: Icon(
+                  widget.icon,
+                  color: Colors.white,
+                  size: MediaQuery.of(context).size.height * 0.03,
+                ),
                 onPressed: widget.onPlayPause,
               ),
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.skip_next,
                   color: Colors.white,
-                  size: 35,
+                  size: MediaQuery.of(context).size.height * 0.03,
                 ),
                 onPressed: () {},
               ),
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.loop, color: inLoop, size: 30),
+                icon: Icon(
+                  Icons.loop,
+                  color: inLoop,
+                  size: MediaQuery.of(context).size.height * 0.03,
+                ),
               ),
             ],
           ),
