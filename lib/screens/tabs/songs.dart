@@ -1,5 +1,7 @@
 // This file is responsible for getting the songs from the local storage
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
@@ -25,6 +27,35 @@ class _SongsState extends State<Songs> {
   bool showMiniPlayer = false; // boolean to show the miniPlayer
   int? currentSongIndex; // grabs the current song's index from the list
   AudioPlayer audioPlayer = AudioPlayer();
+
+  void onPlaySong(int index, SongModel song) {
+    setState(() {
+      if (currentSongIndex != index) {
+        currentSongIndex = index;
+        showMiniPlayer = true;
+
+        for (int i = 0; i < isPlaying.length; i++) {
+          isPlaying[i] = false;
+          playButton[i] = Icons.play_circle;
+        }
+
+        isPlaying[index] = true;
+        playButton[index] = Icons.pause_circle;
+
+        playAudioFromLocalStorage(audioPlayer, song.uri);
+      } else {
+        isPlaying[index] = !isPlaying[index];
+        playButton[index] =
+            isPlaying[index] ? Icons.pause_circle : Icons.play_circle;
+
+        if (isPlaying[index]) {
+          audioPlayer.play();
+        } else {
+          audioPlayer.pause();
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +124,7 @@ class _SongsState extends State<Songs> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
-                                  children: [
+                                  children: <Widget>[
                                     Text(
                                       song.displayNameWOExt,
                                       style: TextStyle(
@@ -120,39 +151,40 @@ class _SongsState extends State<Songs> {
                               ),
                             ),
                             IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  if (currentSongIndex != index) {
-                                    currentSongIndex = index;
-                                    showMiniPlayer = true;
-
-                                    for (int i = 0; i < isPlaying.length; i++) {
-                                      isPlaying[i] = false;
-                                      playButton[i] = Icons.play_circle;
-                                    }
-
-                                    isPlaying[index] = true;
-                                    playButton[index] = Icons.pause_circle;
-
-                                    playAudioFromLocalStorage(
-                                      audioPlayer,
-                                      song.uri,
-                                    );
-                                  } else {
-                                    isPlaying[index] = !isPlaying[index];
-                                    playButton[index] =
-                                        isPlaying[index]
-                                            ? Icons.pause_circle
-                                            : Icons.play_circle;
-
-                                    if (isPlaying[index]) {
-                                      audioPlayer.play();
-                                    } else {
-                                      audioPlayer.pause();
-                                    }
-                                  }
-                                });
-                              },
+                              onPressed: () => onPlaySong(index, song),
+                              // onPressed: () {
+                              //   setState(() {
+                              //     if (currentSongIndex != index) {
+                              //       currentSongIndex = index;
+                              //       showMiniPlayer = true;
+                              //
+                              //       for (int i = 0; i < isPlaying.length; i++) {
+                              //         isPlaying[i] = false;
+                              //         playButton[i] = Icons.play_circle;
+                              //       }
+                              //
+                              //       isPlaying[index] = true;
+                              //       playButton[index] = Icons.pause_circle;
+                              //
+                              //       playAudioFromLocalStorage(
+                              //         audioPlayer,
+                              //         song.uri,
+                              //       );
+                              //     } else {
+                              //       isPlaying[index] = !isPlaying[index];
+                              //       playButton[index] =
+                              //           isPlaying[index]
+                              //               ? Icons.pause_circle
+                              //               : Icons.play_circle;
+                              //
+                              //       if (isPlaying[index]) {
+                              //         audioPlayer.play();
+                              //       } else {
+                              //         audioPlayer.pause();
+                              //       }
+                              //     }
+                              //   });
+                              // },
                               icon: Icon(
                                 playButton[index],
                                 size: 28,
@@ -202,6 +234,26 @@ class _SongsState extends State<Songs> {
                     }
                   }
                 });
+              },
+              onSkipPrevious: () {
+                if (currentSongIndex != null && currentSongIndex != 0) {
+                  onPlaySong(
+                    currentSongIndex! - 1,
+                    musicFromLocalStorage![currentSongIndex! - 1],
+                  );
+                }
+              },
+              onSkipNext: () {
+                if (currentSongIndex != null) {
+                  if (currentSongIndex == (musicFromLocalStorage!.length) - 1) {
+                    onPlaySong(0, musicFromLocalStorage![0]);
+                    return;
+                  }
+                  onPlaySong(
+                    currentSongIndex! + 1,
+                    musicFromLocalStorage![currentSongIndex! + 1],
+                  );
+                }
               },
             ),
           ),

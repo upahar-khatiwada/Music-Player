@@ -17,6 +17,8 @@ class MiniPlayerHome extends StatefulWidget {
   final bool isPlayPressed;
   final AudioPlayer audioPlayer;
   final VoidCallback onPlayPause;
+  final VoidCallback onSkipPrevious;
+  final VoidCallback onSkipNext;
 
   const MiniPlayerHome({
     super.key,
@@ -25,6 +27,8 @@ class MiniPlayerHome extends StatefulWidget {
     required this.icon,
     required this.audioPlayer,
     required this.onPlayPause,
+    required this.onSkipPrevious,
+    required this.onSkipNext,
   });
 
   @override
@@ -149,7 +153,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                   color: Colors.white,
                   size: MediaQuery.of(context).size.height * 0.03,
                 ),
-                onPressed: () {},
+                onPressed: widget.onSkipPrevious,
               ),
               IconButton(
                 icon: Icon(
@@ -165,7 +169,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                   color: Colors.white,
                   size: MediaQuery.of(context).size.height * 0.03,
                 ),
-                onPressed: () {},
+                onPressed: widget.onSkipNext,
               ),
               IconButton(
                 onPressed: () {},
