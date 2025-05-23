@@ -70,7 +70,7 @@ class _FavoritesState extends State<Favorites> {
     } else {
       return Center(
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Row(
             children: <Widget>[
               const Icon(Icons.close, color: Colors.red, size: 50),
@@ -80,7 +80,7 @@ class _FavoritesState extends State<Favorites> {
                 child: Text(
                   'No favorites found!',
                   style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * 0.04,
+                    fontSize: MediaQuery.of(context).size.height * 0.03,
                     color: Colors.white,
                   ),
                 ),

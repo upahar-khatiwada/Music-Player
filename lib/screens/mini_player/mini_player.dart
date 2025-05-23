@@ -1,7 +1,6 @@
 // This file handles the mini player in the bottom of the screen
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:auto_scroll_text/auto_scroll_text.dart';
 import 'package:just_audio/just_audio.dart';
@@ -18,6 +17,8 @@ class MiniPlayerHome extends StatefulWidget {
   final bool isPlayPressed;
   final AudioPlayer audioPlayer;
   final VoidCallback onPlayPause;
+  final VoidCallback onSkipPrevious;
+  final VoidCallback onSkipNext;
 
   const MiniPlayerHome({
     super.key,
@@ -26,6 +27,8 @@ class MiniPlayerHome extends StatefulWidget {
     required this.icon,
     required this.audioPlayer,
     required this.onPlayPause,
+    required this.onSkipPrevious,
+    required this.onSkipNext,
   });
 
   @override
@@ -33,7 +36,7 @@ class MiniPlayerHome extends StatefulWidget {
 }
 
 class _MiniPlayerHomeState extends State<MiniPlayerHome> {
-  late StreamSubscription<Duration> positionSubscription;
+  // late StreamSubscription<Duration> positionSubscription;
   late double? songDuration;
   double currentSliderValue = 0;
 
@@ -44,13 +47,23 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
     songDuration = widget.songModel!.duration?.toDouble();
     // logger.i('Formatted: ${formatDuration(songDuration!)}');
 
-    positionSubscription = widget.audioPlayer.positionStream.listen((
-      Duration p,
-    ) {
+    widget.audioPlayer.positionStream.listen((Duration p) {
       setState(() {
         currentSliderValue = p.inMilliseconds.toDouble();
       });
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant MiniPlayerHome oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.songModel?.id != oldWidget.songModel?.id) {
+      songDuration = widget.songModel?.duration?.toDouble() ?? 0;
+      // currentSliderValue = 0;
+
+      logger.i('Updated song: ${widget.songModel?.displayNameWOExt}');
+    }
   }
 
   @override
@@ -140,7 +153,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                   color: Colors.white,
                   size: MediaQuery.of(context).size.height * 0.03,
                 ),
-                onPressed: () {},
+                onPressed: widget.onSkipPrevious,
               ),
               IconButton(
                 icon: Icon(
@@ -156,7 +169,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                   color: Colors.white,
                   size: MediaQuery.of(context).size.height * 0.03,
                 ),
-                onPressed: () {},
+                onPressed: widget.onSkipNext,
               ),
               IconButton(
                 onPressed: () {},
