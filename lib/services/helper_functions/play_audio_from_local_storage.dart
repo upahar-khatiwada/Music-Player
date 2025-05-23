@@ -7,6 +7,7 @@ final Logger logger = Logger();
 void playAudioFromLocalStorage(AudioPlayer player, String? audioPath) async {
   try {
     await player.setAudioSource(AudioSource.uri(Uri.parse(audioPath!)));
+    await player.seek(Duration.zero);
     await player.play();
   } catch (e) {
     logger.e('Error playing song: $e');

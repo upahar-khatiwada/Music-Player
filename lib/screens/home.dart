@@ -7,6 +7,8 @@ import 'package:music_player/screens/tabs/playlists.dart';
 import 'package:music_player/screens/tabs/songs.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/unfocused_on_tap.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:music_player/services/home_page_tab_services/music_list.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -21,9 +23,15 @@ class _HomepageState extends State<Homepage>
   late final TextEditingController
   _textController; // Text controller for handling search bar
   late final FocusNode _focusNode; // for focusing in the search bar
+  final OnAudioQuery _audioQuery =
+      OnAudioQuery(); // scans the device for finding songs
+
+  List<SongModel> filteredSongModels = <SongModel>[];
 
   @override
   void initState() {
+    super.initState();
+    loadSongs();
     // Controller for the 3 different tabs
     _tabController = TabController(
       length: 3,
@@ -33,11 +41,14 @@ class _HomepageState extends State<Homepage>
 
     // controller for the text in Search Bar
     _textController = TextEditingController();
-
+    if (musicFromLocalStorage != null) {
+      filteredSongModels = musicFromLocalStorage!;
+    } else {
+      filteredSongModels = <SongModel>[];
+    }
+    _textController.addListener(filterSongSearch);
     // focus node for focusing in the search bar
     _focusNode = FocusNode();
-
-    super.initState();
   }
 
   @override
@@ -46,6 +57,49 @@ class _HomepageState extends State<Homepage>
     _textController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void loadSongs() async {
+    musicFromLocalStorage = await _audioQuery.querySongs(
+      sortType: null,
+      ignoreCase: true,
+      orderType: OrderType.ASC_OR_SMALLER,
+      uriType: UriType.EXTERNAL,
+    );
+
+    logger.i('Songs loaded: ${musicFromLocalStorage?.length}');
+
+    setState(() {
+      if (_textController.text.isEmpty) {
+        filteredSongModels = musicFromLocalStorage!;
+      } else {
+        filteredSongModels =
+            musicFromLocalStorage!
+                .where(
+                  (SongModel song) => song.displayNameWOExt
+                      .toLowerCase()
+                      .contains(_textController.text.toLowerCase()),
+                )
+                .toList();
+      }
+    });
+  }
+
+  void filterSongSearch() {
+    final String searchQuery = _textController.text.toLowerCase();
+    setState(() {
+      if (searchQuery.isEmpty) {
+        filteredSongModels = musicFromLocalStorage!;
+      } else {
+        filteredSongModels =
+            musicFromLocalStorage!
+                .where(
+                  (SongModel song) =>
+                      song.displayNameWOExt.toLowerCase().contains(searchQuery),
+                )
+                .toList();
+      }
+    });
   }
 
   @override
@@ -158,7 +212,7 @@ class _HomepageState extends State<Homepage>
                       shape: BoxShape.rectangle,
                       borderRadius: const BorderRadius.all(Radius.circular(12)),
                       color: appbarColor,
-                      boxShadow: [
+                      boxShadow: <BoxShadow>[
                         BoxShadow(
                           color: Colors.black.withAlpha(26),
                           spreadRadius: 2,
@@ -170,8 +224,12 @@ class _HomepageState extends State<Homepage>
                     child: TextField(
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.all(12),
-                        suffixIcon: const Icon(
-                          Icons.search,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            _textController.clear();
+                            loadSongs();
+                          },
+                          icon: const Icon(Icons.search),
                           color: Colors.white,
                         ),
                         hintText: 'Search songs..',
@@ -215,7 +273,7 @@ class _HomepageState extends State<Homepage>
                   tabs: const <Widget>[
                     Tab(
                       child: Row(
-                        children: [
+                        children: <Widget>[
                           Icon(Icons.music_note, color: Colors.white),
                           SizedBox(width: 3.5),
                           Text('Songs', style: TextStyle(color: Colors.white)),
@@ -225,7 +283,7 @@ class _HomepageState extends State<Homepage>
                     ),
                     Tab(
                       child: Row(
-                        children: [
+                        children: <Widget>[
                           Icon(Icons.favorite, color: Colors.white),
                           SizedBox(width: 3.5),
                           Text(
@@ -237,7 +295,7 @@ class _HomepageState extends State<Homepage>
                     ),
                     Tab(
                       child: Row(
-                        children: [
+                        children: <Widget>[
                           Icon(Icons.playlist_play, color: Colors.white),
                           SizedBox(width: 3.5),
                           Text(
@@ -252,7 +310,11 @@ class _HomepageState extends State<Homepage>
                 Flexible(
                   child: TabBarView(
                     controller: _tabController,
-                    children: const <Widget>[Songs(), Favorites(), Playlists()],
+                    children: <Widget>[
+                      Songs(songs: filteredSongModels),
+                      const Favorites(),
+                      const Playlists(),
+                    ],
                   ),
                   // ListTile(
                   //   leading: Icon(Icons.music_note, color: Colors.white),
