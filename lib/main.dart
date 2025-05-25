@@ -11,6 +11,14 @@ void main() async {
   // it makes sure flutter is ready before anything that depends on flutter engine is called
   WidgetsFlutterBinding.ensureInitialized();
   await requestPermissions();
+  // runApp(
+  //   MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider(create: (_) => MiniPlayerState()),
+  //     ],
+  //     child: const MyApp(),
+  //   ),
+  // );
   runApp(const MyApp());
 }
 
@@ -38,7 +46,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => const Homepage(),
         '/playlist_page': (BuildContext context) => const PlaylistPage(),
-        '/bigPlayScreen': (BuildContext context) => const BigPlayScreen(),
+        '/bigPlayScreen':
+            (BuildContext context) => const BigPlayScreen(), // not used anymore
       },
       theme: ThemeData(splashColor: Colors.white, primaryColor: Colors.white),
     );

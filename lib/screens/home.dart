@@ -2,9 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:music_player/screens/tabs/favorites.dart';
-import 'package:music_player/screens/tabs/playlists.dart';
-import 'package:music_player/screens/tabs/songs.dart';
+import 'package:music_player/screens/songs_list_tile/songs.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/unfocused_on_tap.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -19,7 +17,8 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabController; // The tab controller
+  IconData searchBarIconData = Icons.search;
+  // late final TabController _tabController; // The tab controller
   late final TextEditingController
   _textController; // Text controller for handling search bar
   late final FocusNode _focusNode; // for focusing in the search bar
@@ -32,12 +31,12 @@ class _HomepageState extends State<Homepage>
   void initState() {
     super.initState();
     loadSongs();
-    // Controller for the 3 different tabs
-    _tabController = TabController(
-      length: 3,
-      vsync: this,
-      animationDuration: const Duration(milliseconds: 400),
-    );
+    // Controller for the 3 different unused
+    // _tabController = TabController(
+    //   length: 3,
+    //   vsync: this,
+    //   animationDuration: const Duration(milliseconds: 400),
+    // );
 
     // controller for the text in Search Bar
     _textController = TextEditingController();
@@ -53,7 +52,7 @@ class _HomepageState extends State<Homepage>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    // _tabController.dispose();
     _textController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -229,7 +228,7 @@ class _HomepageState extends State<Homepage>
                             _textController.clear();
                             loadSongs();
                           },
-                          icon: const Icon(Icons.search),
+                          icon: Icon(searchBarIconData),
                           color: Colors.white,
                         ),
                         hintText: 'Search songs..',
@@ -257,70 +256,72 @@ class _HomepageState extends State<Homepage>
                     ),
                   ),
                 ),
-                TabBar(
-                  splashFactory: InkRipple.splashFactory,
-                  splashBorderRadius: const BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                  overlayColor: const WidgetStatePropertyAll(Colors.white38),
-                  controller: _tabController,
-                  indicatorColor: Colors.white,
-                  indicator: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: Colors.white, width: 2),
-                    ),
-                  ),
-                  tabs: const <Widget>[
-                    Tab(
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.music_note, color: Colors.white),
-                          SizedBox(width: 3.5),
-                          Text('Songs', style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                      // iconMargin: EdgeInsets.all(10),
-                    ),
-                    Tab(
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.favorite, color: Colors.white),
-                          SizedBox(width: 3.5),
-                          Text(
-                            'Favorites',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Tab(
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.playlist_play, color: Colors.white),
-                          SizedBox(width: 3.5),
-                          Text(
-                            'Playlist',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Flexible(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: <Widget>[
-                      Songs(songs: filteredSongModels),
-                      const Favorites(),
-                      const Playlists(),
-                    ],
-                  ),
-                  // ListTile(
-                  //   leading: Icon(Icons.music_note, color: Colors.white),
-                  //   title: Text('Songs', style: TextStyle(color: Colors.white)),
-                  // ),
-                ),
+                Expanded(child: Songs(songs: filteredSongModels)),
+                // Required state management
+                // TabBar(
+                //   splashFactory: InkRipple.splashFactory,
+                //   splashBorderRadius: const BorderRadius.all(
+                //     Radius.circular(10),
+                //   ),
+                //   overlayColor: const WidgetStatePropertyAll(Colors.white38),
+                //   controller: _tabController,
+                //   indicatorColor: Colors.white,
+                //   indicator: const BoxDecoration(
+                //     border: Border(
+                //       bottom: BorderSide(color: Colors.white, width: 2),
+                //     ),
+                //   ),
+                //   tabs: const <Widget>[
+                //     Tab(
+                //       child: Row(
+                //         children: <Widget>[
+                //           Icon(Icons.music_note, color: Colors.white),
+                //           SizedBox(width: 3.5),
+                //           Text('Songs', style: TextStyle(color: Colors.white)),
+                //         ],
+                //       ),
+                //       // iconMargin: EdgeInsets.all(10),
+                //     ),
+                //     Tab(
+                //       child: Row(
+                //         children: <Widget>[
+                //           Icon(Icons.favorite, color: Colors.white),
+                //           SizedBox(width: 3.5),
+                //           Text(
+                //             'Favorites',
+                //             style: TextStyle(color: Colors.white),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     Tab(
+                //       child: Row(
+                //         children: <Widget>[
+                //           Icon(Icons.playlist_play, color: Colors.white),
+                //           SizedBox(width: 3.5),
+                //           Text(
+                //             'Playlist',
+                //             style: TextStyle(color: Colors.white),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // Flexible(
+                //   child: TabBarView(
+                //     controller: _tabController,
+                //     children: <Widget>[
+                //       Songs(songs: filteredSongModels),
+                //       const Favorites(),
+                //       const Playlists(),
+                //     ],
+                //   ),
+                //   // ListTile(
+                //   //   leading: Icon(Icons.music_note, color: Colors.white),
+                //   //   title: Text('Songs', style: TextStyle(color: Colors.white)),
+                //   // ),
+                // ),
               ],
             ),
           ),
