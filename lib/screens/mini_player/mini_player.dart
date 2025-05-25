@@ -19,6 +19,10 @@ class MiniPlayerHome extends StatefulWidget {
   final VoidCallback onPlayPause;
   final VoidCallback onSkipPrevious;
   final VoidCallback onSkipNext;
+  final VoidCallback onShuffle;
+  final bool isShuffleClicked;
+  final bool isLoopClicked;
+  final VoidCallback onLoop;
 
   const MiniPlayerHome({
     super.key,
@@ -29,6 +33,10 @@ class MiniPlayerHome extends StatefulWidget {
     required this.onPlayPause,
     required this.onSkipPrevious,
     required this.onSkipNext,
+    required this.onShuffle,
+    required this.isShuffleClicked,
+    required this.isLoopClicked,
+    required this.onLoop,
   });
 
   @override
@@ -36,7 +44,8 @@ class MiniPlayerHome extends StatefulWidget {
 }
 
 class _MiniPlayerHomeState extends State<MiniPlayerHome> {
-  // late StreamSubscription<Duration> positionSubscription;
+  late StreamSubscription<Duration> positionSubscription;
+  late StreamSubscription<Duration> durationSubscription;
   late double? songDuration;
   double currentSliderValue = 0;
 
@@ -47,7 +56,9 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
     songDuration = widget.songModel!.duration?.toDouble();
     // logger.i('Formatted: ${formatDuration(songDuration!)}');
 
-    widget.audioPlayer.positionStream.listen((Duration p) {
+    positionSubscription = widget.audioPlayer.positionStream.listen((
+      Duration p,
+    ) {
       setState(() {
         currentSliderValue = p.inMilliseconds.toDouble();
       });
@@ -68,120 +79,124 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.17,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey[500],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              const Icon(Icons.music_note, color: Colors.white, size: 25),
-              const SizedBox(width: 10),
-              Flexible(
-                // child: Tooltip(
-                //   message: widget.songTitle,
-                child: AutoScrollText(
-                  widget.songModel!.displayNameWOExt,
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * 0.02,
-                    color: Colors.white,
+    return Align(
+      alignment: miniPlayerAlignment,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.17,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[500],
+          // color: Colors.black,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                const Icon(Icons.music_note, color: Colors.white, size: 25),
+                const SizedBox(width: 10),
+                Flexible(
+                  // child: Tooltip(
+                  //   message: widget.songTitle,
+                  child: AutoScrollText(
+                    widget.songModel!.displayNameWOExt,
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height * 0.02,
+                      color: Colors.white,
+                    ),
+                    mode: AutoScrollTextMode.endless,
+                    // ),
                   ),
-                  mode: AutoScrollTextMode.endless,
-                  // ),
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text(
-                formatDuration(currentSliderValue),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: MediaQuery.of(context).size.height * 0.02,
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Text(
+                  formatDuration(currentSliderValue),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: MediaQuery.of(context).size.height * 0.02,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Slider(
-                  value: currentSliderValue.clamp(0, songDuration!),
-                  onChanged: (double? val) {
-                    setState(() {
-                      currentSliderValue = val!;
-                    });
-                  },
-                  onChangeEnd: (double value) {
-                    widget.audioPlayer.seek(
-                      Duration(milliseconds: value.toInt()),
-                    );
-                  },
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.blueGrey,
-                  allowedInteraction: SliderInteraction.tapAndSlide,
-                  thumbColor: Colors.white,
-                  min: 0,
-                  max: songDuration!,
+                Expanded(
+                  child: Slider(
+                    value: currentSliderValue.clamp(0, songDuration!),
+                    onChanged: (double? val) {
+                      setState(() {
+                        currentSliderValue = val!;
+                      });
+                    },
+                    onChangeEnd: (double value) {
+                      widget.audioPlayer.seek(
+                        Duration(milliseconds: value.toInt()),
+                      );
+                    },
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.blueGrey,
+                    allowedInteraction: SliderInteraction.tapAndSlide,
+                    thumbColor: Colors.white,
+                    min: 0,
+                    max: songDuration!,
+                  ),
                 ),
-              ),
-              Text(
-                formatDuration(songDuration!),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: MediaQuery.of(context).size.height * 0.02,
+                Text(
+                  formatDuration(songDuration!),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: MediaQuery.of(context).size.height * 0.02,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.shuffle,
-                  color: inShuffle,
-                  size: MediaQuery.of(context).size.height * 0.03,
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                IconButton(
+                  onPressed: widget.onShuffle,
+                  icon: Icon(
+                    Icons.shuffle,
+                    color: widget.isShuffleClicked ? inShuffle : notInShuffle,
+                    size: MediaQuery.of(context).size.height * 0.03,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.skip_previous,
-                  color: Colors.white,
-                  size: MediaQuery.of(context).size.height * 0.03,
+                IconButton(
+                  icon: Icon(
+                    Icons.skip_previous,
+                    color: Colors.white,
+                    size: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  onPressed: widget.onSkipPrevious,
                 ),
-                onPressed: widget.onSkipPrevious,
-              ),
-              IconButton(
-                icon: Icon(
-                  widget.icon,
-                  color: Colors.white,
-                  size: MediaQuery.of(context).size.height * 0.03,
+                IconButton(
+                  icon: Icon(
+                    widget.icon,
+                    color: Colors.white,
+                    size: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  onPressed: widget.onPlayPause,
                 ),
-                onPressed: widget.onPlayPause,
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.skip_next,
-                  color: Colors.white,
-                  size: MediaQuery.of(context).size.height * 0.03,
+                IconButton(
+                  icon: Icon(
+                    Icons.skip_next,
+                    color: Colors.white,
+                    size: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  onPressed: widget.onSkipNext,
                 ),
-                onPressed: widget.onSkipNext,
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.loop,
-                  color: inLoop,
-                  size: MediaQuery.of(context).size.height * 0.03,
+                IconButton(
+                  onPressed: widget.onLoop,
+                  icon: Icon(
+                    Icons.loop,
+                    color: widget.isLoopClicked ? inLoop : notInLoop,
+                    size: MediaQuery.of(context).size.height * 0.03,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
