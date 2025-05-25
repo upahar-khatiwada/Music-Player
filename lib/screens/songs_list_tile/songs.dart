@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/helper_functions/play_audio_from_local_storage.dart';
-import 'package:music_player/services/home_page_tab_services/favorite_songs.dart';
-import 'package:music_player/services/home_page_tab_services/music_list.dart';
+import 'package:music_player/services/folder_containing_songs_info/file_for_handling_song_playing_icons.dart';
+import 'package:music_player/services/folder_containing_songs_info/music_list.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:music_player/screens/mini_player/mini_player.dart';
 import 'package:logger/logger.dart';
 import 'package:music_player/services/helper_functions/format_duration.dart';
+import 'dart:math';
 
 final Logger logger = Logger();
+
+int? shuffleIndexIterator;
+int shuffledIndexPointer = 0;
 
 class Songs extends StatefulWidget {
   final List<SongModel> songs;
@@ -68,6 +72,11 @@ class _SongsState extends State<Songs> {
     });
   }
 
+  void generateShufflingIndex() {
+    final Random random = Random();
+    shuffleIndexIterator = random.nextInt(musicFromLocalStorage!.length);
+  }
+
   void onLoop() async {
     setState(() {
       isLooping = !isLooping;
@@ -82,10 +91,16 @@ class _SongsState extends State<Songs> {
   void onShuffle() {
     setState(() {
       isShuffled = !isShuffled;
+
       if (isShuffled) {
-        audioPlayer.setShuffleModeEnabled(true);
+        shuffledIndices = List<int>.generate(
+          musicFromLocalStorage!.length,
+          (int index) => index,
+        );
+        shuffledIndices.shuffle();
+        logger.i('Shuffled indexes: $shuffledIndices');
       } else {
-        audioPlayer.setShuffleModeEnabled(false);
+        shuffledIndices.clear();
       }
     });
   }
@@ -97,14 +112,30 @@ class _SongsState extends State<Songs> {
         setState(() {
           if (currentSongIndex != null &&
               currentSongIndex! < musicFromLocalStorage!.length - 1) {
-            onPlaySong(
-              currentSongIndex! + 1,
-              musicFromLocalStorage![currentSongIndex! + 1],
+            logger.i(
+              'Before isShuffled if condition, currentSongIndex: $currentSongIndex',
             );
+            if (isShuffled) {
+              // int currentIndexShuffled = shuffledIndices.indexOf(
+              //   currentSongIndex!,
+              // );
+              if (shuffledIndexPointer < shuffledIndices.length - 1) {
+                shuffledIndexPointer++;
+                onPlaySong(
+                  shuffledIndices[shuffledIndexPointer],
+                  musicFromLocalStorage![shuffledIndices[shuffledIndexPointer]],
+                );
+              }
+            } else {
+              onPlaySong(
+                currentSongIndex! + 1,
+                musicFromLocalStorage![currentSongIndex! + 1],
+              );
+            }
           }
         });
-        logger.i('Current song index: ${currentSongIndex!}');
-        logger.i('Previous song index: ${currentSongIndex! - 1}');
+        // logger.i('Current song index: ${currentSongIndex!}');
+        // logger.i('Previous song index: ${currentSongIndex! - 1}');
       }
     } catch (e) {
       logger.e('Error while switching songs: $e');
@@ -124,9 +155,6 @@ class _SongsState extends State<Songs> {
 
     musicFromLocalStorage = songs;
 
-    // if (favoriteSongsLiked.length != songs.length) {
-    //   favoriteSongsLiked = List<Color>.filled(songs.length, unLiked);
-    // }
     if (playButton.length != songs.length) {
       playButton = List<IconData>.filled(songs.length, Icons.play_circle);
     }
@@ -161,22 +189,6 @@ class _SongsState extends State<Songs> {
                             fontSize: MediaQuery.of(context).size.width * 0.045,
                           ),
                         ),
-                        // leading: IconButton(
-                        //   onPressed: () {
-                        //     favoriteSongsLiked[index] =
-                        //         favoriteSongsLiked[index] == liked
-                        //             ? unLiked
-                        //             : liked;
-                        //     favoriteSongsLiked[index] == liked
-                        //         ? favoriteSongs.add(song.displayNameWOExt)
-                        //         : favoriteSongs.remove(song.displayNameWOExt);
-                        //     setState(() {});
-                        //   },
-                        //   icon: Icon(
-                        //     Icons.favorite,
-                        //     color: favoriteSongsLiked[index],
-                        //   ),
-                        // ),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -214,39 +226,6 @@ class _SongsState extends State<Songs> {
                             ),
                             IconButton(
                               onPressed: () => onPlaySong(index, song),
-                              // onPressed: () {
-                              //   setState(() {
-                              //     if (currentSongIndex != index) {
-                              //       currentSongIndex = index;
-                              //       showMiniPlayer = true;
-                              //
-                              //       for (int i = 0; i < isPlaying.length; i++) {
-                              //         isPlaying[i] = false;
-                              //         playButton[i] = Icons.play_circle;
-                              //       }
-                              //
-                              //       isPlaying[index] = true;
-                              //       playButton[index] = Icons.pause_circle;
-                              //
-                              //       playAudioFromLocalStorage(
-                              //         audioPlayer,
-                              //         song.uri,
-                              //       );
-                              //     } else {
-                              //       isPlaying[index] = !isPlaying[index];
-                              //       playButton[index] =
-                              //           isPlaying[index]
-                              //               ? Icons.pause_circle
-                              //               : Icons.play_circle;
-                              //
-                              //       if (isPlaying[index]) {
-                              //         audioPlayer.play();
-                              //       } else {
-                              //         audioPlayer.pause();
-                              //       }
-                              //     }
-                              //   });
-                              // },
                               icon: Icon(
                                 playButton[index],
                                 size: 28,
@@ -294,14 +273,38 @@ class _SongsState extends State<Songs> {
             },
             onSkipPrevious: () {
               if (currentSongIndex != null && currentSongIndex != 0) {
-                onPlaySong(
-                  currentSongIndex! - 1,
-                  musicFromLocalStorage![currentSongIndex! - 1],
-                );
+                if (isShuffled) {
+                  if (shuffledIndexPointer > 0) {
+                    shuffledIndexPointer--;
+                    int prevIndex = shuffledIndices[shuffledIndexPointer];
+                    onPlaySong(prevIndex, musicFromLocalStorage![prevIndex]);
+                  }
+                } else {
+                  if (currentSongIndex == 0) {
+                    onPlaySong(
+                      musicFromLocalStorage!.length - 1,
+                      musicFromLocalStorage!.last,
+                    );
+                  } else {
+                    onPlaySong(
+                      currentSongIndex! - 1,
+                      musicFromLocalStorage![currentSongIndex! - 1],
+                    );
+                  }
+                }
               }
             },
             onSkipNext: () {
               if (currentSongIndex != null) {
+                if (isShuffled) {
+                  if (shuffledIndexPointer < shuffledIndices.length - 1) {
+                    shuffledIndexPointer++;
+                    onPlaySong(
+                      shuffledIndices[shuffledIndexPointer],
+                      musicFromLocalStorage![shuffledIndices[shuffledIndexPointer]],
+                    );
+                  }
+                }
                 if (currentSongIndex == (musicFromLocalStorage!.length) - 1) {
                   onPlaySong(0, musicFromLocalStorage![0]);
                   return;

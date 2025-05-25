@@ -6,7 +6,7 @@ import 'package:music_player/screens/songs_list_tile/songs.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
 import 'package:music_player/services/unfocused_on_tap.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:music_player/services/home_page_tab_services/music_list.dart';
+import 'package:music_player/services/folder_containing_songs_info/music_list.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -31,13 +31,6 @@ class _HomepageState extends State<Homepage>
   void initState() {
     super.initState();
     loadSongs();
-    // Controller for the 3 different unused
-    // _tabController = TabController(
-    //   length: 3,
-    //   vsync: this,
-    //   animationDuration: const Duration(milliseconds: 400),
-    // );
-
     // controller for the text in Search Bar
     _textController = TextEditingController();
     if (musicFromLocalStorage != null) {
@@ -133,62 +126,6 @@ class _HomepageState extends State<Homepage>
           ),
         ),
 
-        // removed drawer as it was getting complicated to choose custom directory
-        // drawer: Drawer(
-        //   backgroundColor: Color(0xFF6c6a6a),
-        //   child: SingleChildScrollView(
-        //     child: Column(
-        //       crossAxisAlignment: CrossAxisAlignment.stretch,
-        //       children: [
-        //         Container(
-        //           color: Color(0xFF464343),
-        //           padding: EdgeInsets.only(top: 60, bottom: 20),
-        //           child: Column(
-        //             children: [
-        //               Row(
-        //                 mainAxisAlignment: MainAxisAlignment.center,
-        //                 children: [
-        //                   Icon(Icons.music_note, color: Colors.white, size: 40),
-        //                   SizedBox(width: 10),
-        //                   Text(
-        //                     'MENU',
-        //                     style: TextStyle(
-        //                       color: Colors.white,
-        //                       letterSpacing: 7.0,
-        //                       fontSize: 30,
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //               SizedBox(height: 10),
-        //             ],
-        //           ),
-        //         ),
-        //         SizedBox(height: 10),
-        //         Material(
-        //           child: ListTile(
-        //             splashColor: Colors.white38,
-        //             tileColor: Color(0xFF6c6a6a),
-        //             contentPadding: EdgeInsets.symmetric(horizontal: 20),
-        //             leading: Icon(Icons.folder, color: Colors.white, size: 30),
-        //             title: Text(
-        //               'Choose directory',
-        //               style: TextStyle(
-        //                 color: Colors.white,
-        //                 letterSpacing: 1.0,
-        //                 fontSize: 20,
-        //               ),
-        //             ),
-        //             onTap: () {
-        //               chooseDirectory();
-        //               setState(() {});
-        //             },
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -257,71 +194,6 @@ class _HomepageState extends State<Homepage>
                   ),
                 ),
                 Expanded(child: Songs(songs: filteredSongModels)),
-                // Required state management
-                // TabBar(
-                //   splashFactory: InkRipple.splashFactory,
-                //   splashBorderRadius: const BorderRadius.all(
-                //     Radius.circular(10),
-                //   ),
-                //   overlayColor: const WidgetStatePropertyAll(Colors.white38),
-                //   controller: _tabController,
-                //   indicatorColor: Colors.white,
-                //   indicator: const BoxDecoration(
-                //     border: Border(
-                //       bottom: BorderSide(color: Colors.white, width: 2),
-                //     ),
-                //   ),
-                //   tabs: const <Widget>[
-                //     Tab(
-                //       child: Row(
-                //         children: <Widget>[
-                //           Icon(Icons.music_note, color: Colors.white),
-                //           SizedBox(width: 3.5),
-                //           Text('Songs', style: TextStyle(color: Colors.white)),
-                //         ],
-                //       ),
-                //       // iconMargin: EdgeInsets.all(10),
-                //     ),
-                //     Tab(
-                //       child: Row(
-                //         children: <Widget>[
-                //           Icon(Icons.favorite, color: Colors.white),
-                //           SizedBox(width: 3.5),
-                //           Text(
-                //             'Favorites',
-                //             style: TextStyle(color: Colors.white),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //     Tab(
-                //       child: Row(
-                //         children: <Widget>[
-                //           Icon(Icons.playlist_play, color: Colors.white),
-                //           SizedBox(width: 3.5),
-                //           Text(
-                //             'Playlist',
-                //             style: TextStyle(color: Colors.white),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // Flexible(
-                //   child: TabBarView(
-                //     controller: _tabController,
-                //     children: <Widget>[
-                //       Songs(songs: filteredSongModels),
-                //       const Favorites(),
-                //       const Playlists(),
-                //     ],
-                //   ),
-                //   // ListTile(
-                //   //   leading: Icon(Icons.music_note, color: Colors.white),
-                //   //   title: Text('Songs', style: TextStyle(color: Colors.white)),
-                //   // ),
-                // ),
               ],
             ),
           ),

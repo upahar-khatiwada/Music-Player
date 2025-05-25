@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 // set to store the liked songs
 // didn't use list as same song could be added multiple times to a list
-Set<String> favoriteSongs = <String>{};
+// Set<String> favoriteSongs = <String>{};
 
 // list to store the colors of the favorite icons
 // List<Color> favoriteSongsLiked = <Color>[];
@@ -18,3 +18,5 @@ List<bool> isPlaying = <bool>[];
 // colors to be put in the list for favorite songs whether its liked or not
 Color unLiked = Colors.white;
 Color liked = Colors.red;
+
+List<int> shuffledIndices = <int>[];
