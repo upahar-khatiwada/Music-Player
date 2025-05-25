@@ -133,7 +133,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                         Duration(milliseconds: value.toInt()),
                       );
                     },
-                    activeColor: Colors.white,
+                    activeColor: Colors.greenAccent,
                     inactiveColor: Colors.blueGrey,
                     allowedInteraction: SliderInteraction.tapAndSlide,
                     thumbColor: Colors.white,

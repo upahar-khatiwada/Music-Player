@@ -104,7 +104,7 @@ class _HomepageState extends State<Homepage>
           iconTheme: const IconThemeData(color: Colors.white),
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               // SizedBox(width: 48.0),
               Icon(Icons.music_note, size: 27, color: Colors.white),
               SizedBox(width: 5),

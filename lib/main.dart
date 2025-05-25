@@ -17,7 +17,7 @@ Future<void> requestPermissions() async {
   if (await Permission.storage.isDenied ||
       await Permission.audio.isDenied ||
       await Permission.mediaLibrary.isDenied) {
-    await [
+    await <Permission>[
       Permission.storage,
       Permission.audio,
       Permission.mediaLibrary,

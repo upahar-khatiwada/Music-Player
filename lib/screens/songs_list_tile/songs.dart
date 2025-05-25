@@ -10,11 +10,11 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:music_player/screens/mini_player/mini_player.dart';
 import 'package:logger/logger.dart';
 import 'package:music_player/services/helper_functions/format_duration.dart';
-import 'dart:math';
+import 'package:lottie/lottie.dart';
 
 final Logger logger = Logger();
 
-int? shuffleIndexIterator;
+// Selects the next shuffled index
 int shuffledIndexPointer = 0;
 
 class Songs extends StatefulWidget {
@@ -72,11 +72,6 @@ class _SongsState extends State<Songs> {
     });
   }
 
-  void generateShufflingIndex() {
-    final Random random = Random();
-    shuffleIndexIterator = random.nextInt(musicFromLocalStorage!.length);
-  }
-
   void onLoop() async {
     setState(() {
       isLooping = !isLooping;
@@ -116,9 +111,6 @@ class _SongsState extends State<Songs> {
               'Before isShuffled if condition, currentSongIndex: $currentSongIndex',
             );
             if (isShuffled) {
-              // int currentIndexShuffled = shuffledIndices.indexOf(
-              //   currentSongIndex!,
-              // );
               if (shuffledIndexPointer < shuffledIndices.length - 1) {
                 shuffledIndexPointer++;
                 onPlaySong(
@@ -181,14 +173,19 @@ class _SongsState extends State<Songs> {
                         onTap: () {},
                         focusColor: Colors.grey,
                         splashColor: Colors.white10,
-                        leading: Text(
-                          '${index + 1}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: MediaQuery.of(context).size.width * 0.045,
-                          ),
-                        ),
+                        leading:
+                            isPlaying[index]
+                                ? Lottie.asset('assets/spotify_waves.json')
+                                : Text(
+                                  '${index + 1}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                        0.045,
+                                  ),
+                                ),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
