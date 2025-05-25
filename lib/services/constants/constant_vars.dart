@@ -14,3 +14,5 @@ Color inShuffle = Colors.greenAccent;
 Color notInShuffle = Colors.white;
 
 Alignment miniPlayerAlignment = Alignment.bottomCenter;
+
+late Offset miniPlayerOffset;

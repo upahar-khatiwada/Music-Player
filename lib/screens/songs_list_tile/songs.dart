@@ -36,7 +36,6 @@ class _SongsState extends State<Songs> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     audioPlayer.processingStateStream.listen((ProcessingState state) {
       if (state == ProcessingState.completed) {
         onSongComplete();
@@ -57,11 +56,16 @@ class _SongsState extends State<Songs> {
     });
   }
 
+  void setMiniPlayerOffset() {
+    miniPlayerOffset = Offset(0, MediaQuery.of(context).size.height * 0.515);
+  }
+
   void onPlaySong(int index, SongModel song) {
     setState(() {
       if (currentSongIndex != index) {
         currentSongIndex = index;
         showMiniPlayer = true;
+        setMiniPlayerOffset();
 
         for (int i = 0; i < isPlaying.length; i++) {
           isPlaying[i] = false;
@@ -262,87 +266,187 @@ class _SongsState extends State<Songs> {
                 ),
               ),
             ),
-        Visibility(
-          visible: showMiniPlayer,
-          child: MiniPlayerHome(
-            isPlayPressed:
-                currentSongIndex != null ? isPlaying[currentSongIndex!] : false,
-            songModel:
-                currentSongIndex != null
-                    ? musicFromLocalStorage![currentSongIndex!]
-                    : null,
-            icon:
-                currentSongIndex != null
-                    ? playButton[currentSongIndex!]
-                    : Icons.play_circle,
-            audioPlayer: audioPlayer,
-            onPlayPause: () {
-              setState(() {
-                if (currentSongIndex != null) {
-                  isPlaying[currentSongIndex!] = !isPlaying[currentSongIndex!];
-                  playButton[currentSongIndex!] =
-                      isPlaying[currentSongIndex!]
-                          ? Icons.pause_circle
-                          : Icons.play_circle;
 
-                  if (isPlaying[currentSongIndex!]) {
-                    audioPlayer.play();
-                  } else {
-                    audioPlayer.pause();
+        if (showMiniPlayer)
+          Positioned(
+            left: miniPlayerOffset.dx,
+            top: miniPlayerOffset.dy,
+            child: GestureDetector(
+              onPanUpdate: (DragUpdateDetails details) {
+                setState(() {
+                  miniPlayerOffset += details.delta;
+                });
+              },
+              child: MiniPlayerHome(
+                isPlayPressed:
+                    currentSongIndex != null
+                        ? isPlaying[currentSongIndex!]
+                        : false,
+                songModel:
+                    currentSongIndex != null
+                        ? musicFromLocalStorage![currentSongIndex!]
+                        : null,
+                icon:
+                    currentSongIndex != null
+                        ? playButton[currentSongIndex!]
+                        : Icons.play_circle,
+                audioPlayer: audioPlayer,
+                onPlayPause: () {
+                  setState(() {
+                    if (currentSongIndex != null) {
+                      isPlaying[currentSongIndex!] =
+                          !isPlaying[currentSongIndex!];
+                      playButton[currentSongIndex!] =
+                          isPlaying[currentSongIndex!]
+                              ? Icons.pause_circle
+                              : Icons.play_circle;
+
+                      if (isPlaying[currentSongIndex!]) {
+                        audioPlayer.play();
+                      } else {
+                        audioPlayer.pause();
+                      }
+                    }
+                  });
+                },
+                onSkipPrevious: () {
+                  if (currentSongIndex != null && currentSongIndex != 0) {
+                    if (isShuffled) {
+                      if (shuffledIndexPointer > 0) {
+                        shuffledIndexPointer--;
+                        int prevIndex = shuffledIndices[shuffledIndexPointer];
+                        onPlaySong(
+                          prevIndex,
+                          musicFromLocalStorage![prevIndex],
+                        );
+                      }
+                    } else {
+                      if (currentSongIndex == 0) {
+                        onPlaySong(
+                          musicFromLocalStorage!.length - 1,
+                          musicFromLocalStorage!.last,
+                        );
+                      } else {
+                        onPlaySong(
+                          currentSongIndex! - 1,
+                          musicFromLocalStorage![currentSongIndex! - 1],
+                        );
+                      }
+                    }
                   }
-                }
-              });
-            },
-            onSkipPrevious: () {
-              if (currentSongIndex != null && currentSongIndex != 0) {
-                if (isShuffled) {
-                  if (shuffledIndexPointer > 0) {
-                    shuffledIndexPointer--;
-                    int prevIndex = shuffledIndices[shuffledIndexPointer];
-                    onPlaySong(prevIndex, musicFromLocalStorage![prevIndex]);
-                  }
-                } else {
-                  if (currentSongIndex == 0) {
+                },
+                onSkipNext: () {
+                  if (currentSongIndex != null) {
+                    if (isShuffled) {
+                      if (shuffledIndexPointer < shuffledIndices.length - 1) {
+                        shuffledIndexPointer++;
+                        onPlaySong(
+                          shuffledIndices[shuffledIndexPointer],
+                          musicFromLocalStorage![shuffledIndices[shuffledIndexPointer]],
+                        );
+                      }
+                    }
+                    if (currentSongIndex ==
+                        (musicFromLocalStorage!.length) - 1) {
+                      onPlaySong(0, musicFromLocalStorage![0]);
+                      return;
+                    }
                     onPlaySong(
-                      musicFromLocalStorage!.length - 1,
-                      musicFromLocalStorage!.last,
-                    );
-                  } else {
-                    onPlaySong(
-                      currentSongIndex! - 1,
-                      musicFromLocalStorage![currentSongIndex! - 1],
+                      currentSongIndex! + 1,
+                      musicFromLocalStorage![currentSongIndex! + 1],
                     );
                   }
-                }
-              }
-            },
-            onSkipNext: () {
-              if (currentSongIndex != null) {
-                if (isShuffled) {
-                  if (shuffledIndexPointer < shuffledIndices.length - 1) {
-                    shuffledIndexPointer++;
-                    onPlaySong(
-                      shuffledIndices[shuffledIndexPointer],
-                      musicFromLocalStorage![shuffledIndices[shuffledIndexPointer]],
-                    );
-                  }
-                }
-                if (currentSongIndex == (musicFromLocalStorage!.length) - 1) {
-                  onPlaySong(0, musicFromLocalStorage![0]);
-                  return;
-                }
-                onPlaySong(
-                  currentSongIndex! + 1,
-                  musicFromLocalStorage![currentSongIndex! + 1],
-                );
-              }
-            },
-            onShuffle: onShuffle,
-            isShuffleClicked: isShuffled,
-            isLoopClicked: isLooping,
-            onLoop: onLoop,
+                },
+                onShuffle: onShuffle,
+                isShuffleClicked: isShuffled,
+                isLoopClicked: isLooping,
+                onLoop: onLoop,
+              ),
+            ),
           ),
-        ),
+
+        // Code block before adding drag feature
+        // Visibility(
+        //   visible: showMiniPlayer,
+        //   child: MiniPlayerHome(
+        //     isPlayPressed:
+        //         currentSongIndex != null ? isPlaying[currentSongIndex!] : false,
+        //     songModel:
+        //         currentSongIndex != null
+        //             ? musicFromLocalStorage![currentSongIndex!]
+        //             : null,
+        //     icon:
+        //         currentSongIndex != null
+        //             ? playButton[currentSongIndex!]
+        //             : Icons.play_circle,
+        //     audioPlayer: audioPlayer,
+        //     onPlayPause: () {
+        //       setState(() {
+        //         if (currentSongIndex != null) {
+        //           isPlaying[currentSongIndex!] = !isPlaying[currentSongIndex!];
+        //           playButton[currentSongIndex!] =
+        //               isPlaying[currentSongIndex!]
+        //                   ? Icons.pause_circle
+        //                   : Icons.play_circle;
+        //
+        //           if (isPlaying[currentSongIndex!]) {
+        //             audioPlayer.play();
+        //           } else {
+        //             audioPlayer.pause();
+        //           }
+        //         }
+        //       });
+        //     },
+        //     onSkipPrevious: () {
+        //       if (currentSongIndex != null && currentSongIndex != 0) {
+        //         if (isShuffled) {
+        //           if (shuffledIndexPointer > 0) {
+        //             shuffledIndexPointer--;
+        //             int prevIndex = shuffledIndices[shuffledIndexPointer];
+        //             onPlaySong(prevIndex, musicFromLocalStorage![prevIndex]);
+        //           }
+        //         } else {
+        //           if (currentSongIndex == 0) {
+        //             onPlaySong(
+        //               musicFromLocalStorage!.length - 1,
+        //               musicFromLocalStorage!.last,
+        //             );
+        //           } else {
+        //             onPlaySong(
+        //               currentSongIndex! - 1,
+        //               musicFromLocalStorage![currentSongIndex! - 1],
+        //             );
+        //           }
+        //         }
+        //       }
+        //     },
+        //     onSkipNext: () {
+        //       if (currentSongIndex != null) {
+        //         if (isShuffled) {
+        //           if (shuffledIndexPointer < shuffledIndices.length - 1) {
+        //             shuffledIndexPointer++;
+        //             onPlaySong(
+        //               shuffledIndices[shuffledIndexPointer],
+        //               musicFromLocalStorage![shuffledIndices[shuffledIndexPointer]],
+        //             );
+        //           }
+        //         }
+        //         if (currentSongIndex == (musicFromLocalStorage!.length) - 1) {
+        //           onPlaySong(0, musicFromLocalStorage![0]);
+        //           return;
+        //         }
+        //         onPlaySong(
+        //           currentSongIndex! + 1,
+        //           musicFromLocalStorage![currentSongIndex! + 1],
+        //         );
+        //       }
+        //     },
+        //     onShuffle: onShuffle,
+        //     isShuffleClicked: isShuffled,
+        //     isLoopClicked: isLooping,
+        //     onLoop: onLoop,
+        //   ),
+        // ),
       ],
     );
   }

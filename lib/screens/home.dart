@@ -26,6 +26,7 @@ class _HomepageState extends State<Homepage>
       OnAudioQuery(); // scans the device for finding songs
 
   List<SongModel> filteredSongModels = <SongModel>[];
+  late Offset initialMiniPlayerOffset;
 
   @override
   void initState() {
@@ -124,6 +125,27 @@ class _HomepageState extends State<Homepage>
             statusBarColor: Colors.black,
             statusBarBrightness: Brightness.dark,
           ),
+          actions: <Widget>[
+            GestureDetector(
+              onLongPress: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Resets the mini player!')),
+                );
+              },
+              child: IconButton(
+                onPressed: () {
+                  initialMiniPlayerOffset = Offset(
+                    0,
+                    MediaQuery.of(context).size.height * 0.515,
+                  );
+                  setState(() {
+                    miniPlayerOffset = initialMiniPlayerOffset;
+                  });
+                },
+                icon: const Icon(Icons.refresh, color: Colors.red),
+              ),
+            ),
+          ],
         ),
 
         body: SafeArea(

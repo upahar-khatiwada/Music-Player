@@ -82,6 +82,7 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
     return Align(
       alignment: miniPlayerAlignment,
       child: Container(
+        width: MediaQuery.of(context).size.width * 0.93,
         height: MediaQuery.of(context).size.height * 0.17,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -109,6 +110,10 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                     // ),
                   ),
                 ),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.refresh, color: Colors.red),
+                // ),
               ],
             ),
             Row(
