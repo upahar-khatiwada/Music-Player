@@ -36,9 +36,23 @@ class _SongsState extends State<Songs> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     audioPlayer.processingStateStream.listen((ProcessingState state) {
       if (state == ProcessingState.completed) {
         onSongComplete();
+      }
+    });
+
+    // Sync's the notification bar's play/pause with main app's play/pause
+    audioPlayer.playerStateStream.listen((PlayerState playerState) {
+      final bool isPlayingNow = playerState.playing;
+
+      if (currentSongIndex != null) {
+        setState(() {
+          isPlaying[currentSongIndex!] = isPlayingNow;
+          playButton[currentSongIndex!] =
+              isPlayingNow ? Icons.pause_circle : Icons.play_circle;
+        });
       }
     });
   }
@@ -57,7 +71,13 @@ class _SongsState extends State<Songs> {
         isPlaying[index] = true;
         playButton[index] = Icons.pause_circle;
 
-        playAudioFromLocalStorage(audioPlayer, song.uri);
+        playAudioFromLocalStorage(
+          audioPlayer,
+          song.uri,
+          song.id,
+          song.album,
+          song.displayNameWOExt,
+        );
       } else {
         isPlaying[index] = !isPlaying[index];
         playButton[index] =
@@ -141,7 +161,6 @@ class _SongsState extends State<Songs> {
     if (songs.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(color: Colors.white),
-        // child: Text('No songs found!', style: TextStyle(color: Colors.white)),
       );
     }
 
@@ -179,7 +198,10 @@ class _SongsState extends State<Songs> {
                                 : Text(
                                   '${index + 1}',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color:
+                                        (currentSongIndex == index)
+                                            ? Colors.greenAccent
+                                            : Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize:
                                         MediaQuery.of(context).size.width *
@@ -199,7 +221,10 @@ class _SongsState extends State<Songs> {
                                     Text(
                                       song.displayNameWOExt,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color:
+                                            (currentSongIndex == index)
+                                                ? Colors.greenAccent
+                                                : Colors.white,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                             0.039,

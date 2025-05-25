@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_player/screens/home.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-void main() async {
+Future<void> main() async {
   // required for on_audio_query plugin
   // this line makes sure flutter's core engine is fully initialized before anything else
   // it basically sets up internal services
   // it makes sure flutter is ready before anything that depends on flutter engine is called
   WidgetsFlutterBinding.ensureInitialized();
   await requestPermissions();
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   runApp(const MyApp());
 }
 
