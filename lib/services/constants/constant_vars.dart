@@ -6,9 +6,11 @@ Color appbarColor = const Color(0xFF464343);
 Color bgColor = const Color(0xFF6c6a6a);
 
 // Colors for loop control
-Color notInLoop = Colors.white;
 Color inLoop = Colors.greenAccent;
+Color notInLoop = Colors.white;
 
 // Colors for shuffle control
 Color inShuffle = Colors.greenAccent;
 Color notInShuffle = Colors.white;
+
+Alignment miniPlayerAlignment = Alignment.bottomCenter;

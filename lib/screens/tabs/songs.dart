@@ -1,7 +1,5 @@
 // This file is responsible for getting the songs from the local storage
 
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/services/constants/constant_vars.dart';
@@ -27,6 +25,19 @@ class _SongsState extends State<Songs> {
   bool showMiniPlayer = false; // boolean to show the miniPlayer
   int? currentSongIndex; // grabs the current song's index from the list
   AudioPlayer audioPlayer = AudioPlayer();
+  bool isShuffled = false;
+  bool isLooping = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    audioPlayer.processingStateStream.listen((ProcessingState state) {
+      if (state == ProcessingState.completed) {
+        onSongComplete();
+      }
+    });
+  }
 
   void onPlaySong(int index, SongModel song) {
     setState(() {
@@ -55,6 +66,49 @@ class _SongsState extends State<Songs> {
         }
       }
     });
+  }
+
+  void onLoop() async {
+    setState(() {
+      isLooping = !isLooping;
+    });
+    if (isLooping) {
+      await audioPlayer.setLoopMode(LoopMode.one);
+    } else {
+      await audioPlayer.setLoopMode(LoopMode.off);
+    }
+  }
+
+  void onShuffle() {
+    setState(() {
+      isShuffled = !isShuffled;
+      if (isShuffled) {
+        audioPlayer.setShuffleModeEnabled(true);
+      } else {
+        audioPlayer.setShuffleModeEnabled(false);
+      }
+    });
+  }
+
+  void onSongComplete() {
+    try {
+      if (currentSongIndex != null &&
+          currentSongIndex! < musicFromLocalStorage!.length) {
+        setState(() {
+          if (currentSongIndex != null &&
+              currentSongIndex! < musicFromLocalStorage!.length - 1) {
+            onPlaySong(
+              currentSongIndex! + 1,
+              musicFromLocalStorage![currentSongIndex! + 1],
+            );
+          }
+        });
+        logger.i('Current song index: ${currentSongIndex!}');
+        logger.i('Previous song index: ${currentSongIndex! - 1}');
+      }
+    } catch (e) {
+      logger.e('Error while switching songs: $e');
+    }
   }
 
   @override
@@ -201,61 +255,59 @@ class _SongsState extends State<Songs> {
             ),
         Visibility(
           visible: showMiniPlayer,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: MiniPlayerHome(
-              isPlayPressed:
-                  currentSongIndex != null
-                      ? isPlaying[currentSongIndex!]
-                      : false,
-              songModel:
-                  currentSongIndex != null
-                      ? musicFromLocalStorage![currentSongIndex!]
-                      : null,
-              icon:
-                  currentSongIndex != null
-                      ? playButton[currentSongIndex!]
-                      : Icons.play_circle,
-              audioPlayer: audioPlayer,
-              onPlayPause: () {
-                setState(() {
-                  if (currentSongIndex != null) {
-                    isPlaying[currentSongIndex!] =
-                        !isPlaying[currentSongIndex!];
-                    playButton[currentSongIndex!] =
-                        isPlaying[currentSongIndex!]
-                            ? Icons.pause_circle
-                            : Icons.play_circle;
-
-                    if (isPlaying[currentSongIndex!]) {
-                      audioPlayer.play();
-                    } else {
-                      audioPlayer.pause();
-                    }
-                  }
-                });
-              },
-              onSkipPrevious: () {
-                if (currentSongIndex != null && currentSongIndex != 0) {
-                  onPlaySong(
-                    currentSongIndex! - 1,
-                    musicFromLocalStorage![currentSongIndex! - 1],
-                  );
-                }
-              },
-              onSkipNext: () {
+          child: MiniPlayerHome(
+            isPlayPressed:
+                currentSongIndex != null ? isPlaying[currentSongIndex!] : false,
+            songModel:
+                currentSongIndex != null
+                    ? musicFromLocalStorage![currentSongIndex!]
+                    : null,
+            icon:
+                currentSongIndex != null
+                    ? playButton[currentSongIndex!]
+                    : Icons.play_circle,
+            audioPlayer: audioPlayer,
+            onPlayPause: () {
+              setState(() {
                 if (currentSongIndex != null) {
-                  if (currentSongIndex == (musicFromLocalStorage!.length) - 1) {
-                    onPlaySong(0, musicFromLocalStorage![0]);
-                    return;
+                  isPlaying[currentSongIndex!] = !isPlaying[currentSongIndex!];
+                  playButton[currentSongIndex!] =
+                      isPlaying[currentSongIndex!]
+                          ? Icons.pause_circle
+                          : Icons.play_circle;
+
+                  if (isPlaying[currentSongIndex!]) {
+                    audioPlayer.play();
+                  } else {
+                    audioPlayer.pause();
                   }
-                  onPlaySong(
-                    currentSongIndex! + 1,
-                    musicFromLocalStorage![currentSongIndex! + 1],
-                  );
                 }
-              },
-            ),
+              });
+            },
+            onSkipPrevious: () {
+              if (currentSongIndex != null && currentSongIndex != 0) {
+                onPlaySong(
+                  currentSongIndex! - 1,
+                  musicFromLocalStorage![currentSongIndex! - 1],
+                );
+              }
+            },
+            onSkipNext: () {
+              if (currentSongIndex != null) {
+                if (currentSongIndex == (musicFromLocalStorage!.length) - 1) {
+                  onPlaySong(0, musicFromLocalStorage![0]);
+                  return;
+                }
+                onPlaySong(
+                  currentSongIndex! + 1,
+                  musicFromLocalStorage![currentSongIndex! + 1],
+                );
+              }
+            },
+            onShuffle: onShuffle,
+            isShuffleClicked: isShuffled,
+            isLoopClicked: isLooping,
+            onLoop: onLoop,
           ),
         ),
       ],
