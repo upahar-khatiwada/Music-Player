@@ -8,8 +8,8 @@ This is a basic music player app that supports background music playing.<br>
 ## Features
 
 - **Background Music Player** <br>
+ <img src="https://github.com/user-attachments/assets/0f725c36-1d0d-4726-b691-dd64f69e6f2f" width="400" />
 <br>
- <img src="https://github.com/user-attachments/assets/d0aff0d3-462a-4c71-9442-cfa3f3762bde" width="400 />
 
 - **Includes Shuffling, Looping, Skipping, and Pausing**
 - **Automatically scans the songs in your mobile device**
