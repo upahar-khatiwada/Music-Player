@@ -36,6 +36,13 @@ class _SongsState extends State<Songs> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    // Set the initial offset after the first frame when context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setMiniPlayerOffset();
+    });
+
+    // checks if a song's state is completed and plays new song
     audioPlayer.processingStateStream.listen((ProcessingState state) {
       if (state == ProcessingState.completed) {
         onSongComplete();
@@ -56,28 +63,52 @@ class _SongsState extends State<Songs> {
     });
   }
 
-  void setMiniPlayerOffset() {
-    miniPlayerOffset = Offset(0, MediaQuery.of(context).size.height * 0.515);
+  @override
+  void didUpdateWidget(covariant Songs oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // bug fix code blocl
+    // makes sure mini player is initialized properly
+    if (oldWidget.songs.length != widget.songs.length) {
+      isPlaying = List<bool>.filled(widget.songs.length, false);
+      playButton = List<IconData>.filled(
+        widget.songs.length,
+        Icons.play_circle,
+      );
+    }
   }
 
+  // sets the mini player offset
+  void setMiniPlayerOffset() {
+    miniPlayerOffset = Offset(0, MediaQuery.of(context).size.height * 0.57);
+  }
+
+  // called when play button is clicked
   void onPlaySong(int index, SongModel song) {
     setState(() {
+      // gets the current song's index
       if (currentSongIndex != index) {
         currentSongIndex = index;
         showMiniPlayer = true;
 
+        // needed to handle mini player
+        // if block needed else it resets the mini player's position when new song gets played
         if (!showMiniPlayer) {
           setMiniPlayerOffset();
+          showMiniPlayer = true;
         }
 
+        // changing the icons for all songs
         for (int i = 0; i < isPlaying.length; i++) {
           isPlaying[i] = false;
           playButton[i] = Icons.play_circle;
         }
 
+        // changing the icon for the current song
         isPlaying[index] = true;
         playButton[index] = Icons.pause_circle;
 
+        // playing the song
         playAudioFromLocalStorage(
           audioPlayer,
           song.uri,
@@ -86,10 +117,14 @@ class _SongsState extends State<Songs> {
           song.displayNameWOExt,
         );
       } else {
-        isPlaying[index] = !isPlaying[index];
+        // else block called when same song's play/pause icon is pressed as
+        // current song index and index are same
+        isPlaying[index] = !isPlaying[index]; // toggles the boolean
+        // setting the icon according to the toggled boolean
         playButton[index] =
             isPlaying[index] ? Icons.pause_circle : Icons.play_circle;
 
+        // performing necessary operations
         if (isPlaying[index]) {
           audioPlayer.play();
         } else {
@@ -100,33 +135,40 @@ class _SongsState extends State<Songs> {
   }
 
   void onLoop() async {
+    // setting the loop boolean
     setState(() {
       isLooping = !isLooping;
     });
     if (isLooping) {
-      await audioPlayer.setLoopMode(LoopMode.one);
+      await audioPlayer.setLoopMode(LoopMode.one); // loops one song
     } else {
-      await audioPlayer.setLoopMode(LoopMode.off);
+      await audioPlayer.setLoopMode(LoopMode.off); // loop turned off
     }
   }
 
   void onShuffle() {
     setState(() {
+      // toggling shuffle boolean
+      // initially false
       isShuffled = !isShuffled;
 
       if (isShuffled) {
+        // generating a list of shuffled indices
         shuffledIndices = List<int>.generate(
           musicFromLocalStorage!.length,
           (int index) => index,
         );
+        // shuffling the generated indices
         shuffledIndices.shuffle();
-        logger.i('Shuffled indexes: $shuffledIndices');
+        // logger.i('Shuffled indexes: $shuffledIndices');
       } else {
+        // if shuffling is turned off the shuffled indices are cleared
         shuffledIndices.clear();
       }
     });
   }
 
+  // function called when the current song's state is completed
   void onSongComplete() {
     try {
       if (currentSongIndex != null &&
@@ -134,9 +176,11 @@ class _SongsState extends State<Songs> {
         setState(() {
           if (currentSongIndex != null &&
               currentSongIndex! < musicFromLocalStorage!.length - 1) {
-            logger.i(
-              'Before isShuffled if condition, currentSongIndex: $currentSongIndex',
-            );
+            // logger.i(
+            //   'Before isShuffled if condition, currentSongIndex: $currentSongIndex',
+            // );
+
+            // shuffling logic
             if (isShuffled) {
               if (shuffledIndexPointer < shuffledIndices.length - 1) {
                 shuffledIndexPointer++;
@@ -317,10 +361,9 @@ class _SongsState extends State<Songs> {
                     if (isShuffled) {
                       if (shuffledIndexPointer > 0) {
                         shuffledIndexPointer--;
-                        int prevIndex = shuffledIndices[shuffledIndexPointer];
                         onPlaySong(
-                          prevIndex,
-                          musicFromLocalStorage![prevIndex],
+                          shuffledIndices[shuffledIndexPointer],
+                          musicFromLocalStorage![shuffledIndices[shuffledIndexPointer]],
                         );
                       }
                     } else {

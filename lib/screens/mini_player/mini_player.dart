@@ -12,17 +12,17 @@ import 'package:music_player/services/helper_functions/format_duration.dart';
 final Logger logger = Logger();
 
 class MiniPlayerHome extends StatefulWidget {
-  final IconData? icon;
-  final SongModel? songModel;
-  final bool isPlayPressed;
-  final AudioPlayer audioPlayer;
-  final VoidCallback onPlayPause;
-  final VoidCallback onSkipPrevious;
-  final VoidCallback onSkipNext;
-  final VoidCallback onShuffle;
-  final bool isShuffleClicked;
-  final bool isLoopClicked;
-  final VoidCallback onLoop;
+  final IconData? icon; // play/pause icon from parent widget
+  final SongModel? songModel; // current song's object
+  final bool isPlayPressed; // boolean to check if play button is pressed or not
+  final AudioPlayer audioPlayer; // audio player's object
+  final VoidCallback onPlayPause; // function to handle play/pause
+  final VoidCallback onSkipPrevious; // function to handle skip previous
+  final VoidCallback onSkipNext; // function to handle skip next
+  final VoidCallback onShuffle; // function to handle shuffle
+  final bool isShuffleClicked; // boolean to check if shuffle is pressed
+  final bool isLoopClicked; // boolean to check if loop is pressed
+  final VoidCallback onLoop; // function to handle looping
 
   const MiniPlayerHome({
     super.key,
@@ -45,31 +45,36 @@ class MiniPlayerHome extends StatefulWidget {
 
 class _MiniPlayerHomeState extends State<MiniPlayerHome> {
   late StreamSubscription<Duration> positionSubscription;
-  late StreamSubscription<Duration> durationSubscription;
-  late double? songDuration;
-  double currentSliderValue = 0;
+  // late StreamSubscription<Duration> durationSubscription;
+  late double? songDuration; // gets the current song's duration
+  double currentSliderValue = 0; // current slider's value
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // initializing song's duration
     songDuration = widget.songModel!.duration?.toDouble();
     // logger.i('Formatted: ${formatDuration(songDuration!)}');
 
+    // emits current playback position of the audio as duration
     positionSubscription = widget.audioPlayer.positionStream.listen((
       Duration p,
     ) {
+      // setting slider value
       setState(() {
         currentSliderValue = p.inMilliseconds.toDouble();
       });
     });
   }
 
+  // needed when playing a new song as a widget rebuild happens
   @override
   void didUpdateWidget(covariant MiniPlayerHome oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (widget.songModel?.id != oldWidget.songModel?.id) {
+      // changes the song's duration's text if a new song is played
       songDuration = widget.songModel?.duration?.toDouble() ?? 0;
       // currentSliderValue = 0;
 
@@ -98,8 +103,6 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                 const Icon(Icons.music_note, color: Colors.white, size: 25),
                 const SizedBox(width: 10),
                 Flexible(
-                  // child: Tooltip(
-                  //   message: widget.songTitle,
                   child: AutoScrollText(
                     widget.songModel!.displayNameWOExt,
                     style: TextStyle(
@@ -110,10 +113,6 @@ class _MiniPlayerHomeState extends State<MiniPlayerHome> {
                     // ),
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () {},
-                //   icon: const Icon(Icons.refresh, color: Colors.red),
-                // ),
               ],
             ),
             Row(

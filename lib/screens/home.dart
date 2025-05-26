@@ -200,12 +200,11 @@ class _HomepageState extends State<Homepage>
                         ),
                       ),
                       onTap: () {
-                        initialMiniPlayerOffset = Offset(
-                          0,
-                          MediaQuery.of(context).size.height * 0.515,
-                        );
                         setState(() {
-                          miniPlayerOffset = initialMiniPlayerOffset;
+                          miniPlayerOffset = Offset(
+                            0,
+                            MediaQuery.of(context).size.height * 0.57,
+                          );
                         });
                       },
                     ),

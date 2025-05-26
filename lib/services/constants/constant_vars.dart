@@ -13,6 +13,7 @@ Color notInLoop = Colors.white;
 Color inShuffle = Colors.greenAccent;
 Color notInShuffle = Colors.white;
 
+// aligning the mini player
 Alignment miniPlayerAlignment = Alignment.bottomCenter;
 
-late Offset miniPlayerOffset;
+Offset miniPlayerOffset = const Offset(0, 0);

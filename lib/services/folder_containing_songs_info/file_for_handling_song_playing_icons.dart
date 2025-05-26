@@ -19,4 +19,5 @@ List<bool> isPlaying = <bool>[];
 Color unLiked = Colors.white;
 Color liked = Colors.red;
 
+// holds the shuffled indices
 List<int> shuffledIndices = <int>[];
