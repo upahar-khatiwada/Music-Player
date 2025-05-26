@@ -103,13 +103,14 @@ class _HomepageState extends State<Homepage>
         appBar: AppBar(
           // for the menu icon's color
           iconTheme: const IconThemeData(color: Colors.white),
-          title: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               // SizedBox(width: 48.0),
-              Icon(Icons.music_note, size: 27, color: Colors.white),
-              SizedBox(width: 5),
-              Text(
+              SizedBox(width: MediaQuery.of(context).size.width * 0.108),
+              const Icon(Icons.music_note, size: 27, color: Colors.white),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+              const Text(
                 'Music Player',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -119,33 +120,100 @@ class _HomepageState extends State<Homepage>
               ),
             ],
           ),
-          centerTitle: true,
+          // centerTitle: true,
           backgroundColor: appbarColor,
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.black,
             statusBarBrightness: Brightness.dark,
           ),
-          actions: <Widget>[
-            GestureDetector(
-              onLongPress: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Resets the mini player!')),
-                );
-              },
-              child: IconButton(
-                onPressed: () {
-                  initialMiniPlayerOffset = Offset(
-                    0,
-                    MediaQuery.of(context).size.height * 0.515,
-                  );
-                  setState(() {
-                    miniPlayerOffset = initialMiniPlayerOffset;
-                  });
-                },
-                icon: const Icon(Icons.refresh, color: Colors.red),
-              ),
+        ),
+        drawer: Drawer(
+          backgroundColor: appbarColor,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  color: bgColor,
+                  padding: const EdgeInsets.only(top: 60, bottom: 20),
+                  child: const Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.music_note, color: Colors.white, size: 40),
+                          SizedBox(width: 10),
+                          Text(
+                            'MENU',
+                            style: TextStyle(
+                              color: Colors.white,
+                              letterSpacing: 7.0,
+                              fontSize: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Material(
+                  child: GestureDetector(
+                    onLongPress: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
+                            children: <Widget>[
+                              const Icon(
+                                Icons.info_outline,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.01,
+                              ),
+                              const Text(
+                                'Resets the mini player back to its original position',
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      splashColor: Colors.white38,
+                      tileColor: appbarColor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      leading: const Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      title: const Text(
+                        'Reset mini player',
+                        style: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 1.0,
+                          fontSize: 20,
+                        ),
+                      ),
+                      onTap: () {
+                        initialMiniPlayerOffset = Offset(
+                          0,
+                          MediaQuery.of(context).size.height * 0.515,
+                        );
+                        setState(() {
+                          miniPlayerOffset = initialMiniPlayerOffset;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
 
         body: SafeArea(

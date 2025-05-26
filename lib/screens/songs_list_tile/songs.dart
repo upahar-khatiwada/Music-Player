@@ -65,7 +65,10 @@ class _SongsState extends State<Songs> {
       if (currentSongIndex != index) {
         currentSongIndex = index;
         showMiniPlayer = true;
-        setMiniPlayerOffset();
+
+        if (!showMiniPlayer) {
+          setMiniPlayerOffset();
+        }
 
         for (int i = 0; i < isPlaying.length; i++) {
           isPlaying[i] = false;
